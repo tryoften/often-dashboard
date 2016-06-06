@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": false,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "sourceMap": true,
+        "outDir": "dist",
+		"jsx": "React",
+        "moduleResolution": "node",
+		"target": "es5",
+		"experimentalDecorators": true
+    },
+    "files": [
+        "typings/index.d.ts",
+        "src/server.ts",
+        "src/server-dev.ts"
+    ]
+}
