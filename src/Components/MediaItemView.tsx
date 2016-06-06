@@ -1,11 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { IndexableObject } from "../../Interfaces/Indexable";
-import { TrackIndexableObject } from "../../Models/Track";
-import { ArtistIndexableObject } from "../../Models/Artist";
-import MediaItemType from "../../Models/MediaItemType";
+import { IndexableObject, TrackIndexableObject, ArtistIndexableObject, MediaItemType, GIFAttributes } from '@often/often-core';
 import ImageBrandMask from '../Components/ImageBrandMask';
-import { GIFAttributes } from "../../Models/GIF";
 
 interface SearchResultItemViewProps {
 	item: IndexableObject;

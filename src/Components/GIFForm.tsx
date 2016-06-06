@@ -1,7 +1,6 @@
 import * as React from 'react';
-import GIF, { GIFAttributes } from '../../Models/GIF';
+import { GIF, GIFAttributes, Owner } from '@often/often-core';
 import { Input, Modal, Button, Thumbnail } from 'react-bootstrap';
-import Owner from "../../Models/Owner";
 import * as _ from 'underscore';
 import * as objectPath from 'object-path';
 

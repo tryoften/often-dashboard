@@ -1,12 +1,11 @@
 import * as React from 'react';
+import * as _ from 'underscore';
+import * as objectPath from 'object-path';
 import { Grid, Row, Col, Input, Thumbnail, ButtonInput, Button, Tabs, Tab } from 'react-bootstrap';
-import Owner, { OwnerAttributes } from '../../Models/Owner';
+import { Owner, OwnerAttributes, IndexableObject } from '@often/often-core';
 import QuoteForm from '../Components/QuoteForm';
 import GIFForm from '../Components/GIFForm';
 import MediaItemView from '../Components/MediaItemView';
-import { IndexableObject } from "../../Interfaces/Indexable";
-import * as _ from 'underscore';
-import * as objectPath from 'object-path';
 
 interface OwnerItemProps extends React.Props<OwnerItem> {
 	params: {

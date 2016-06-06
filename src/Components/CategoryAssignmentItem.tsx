@@ -3,7 +3,7 @@ import * as _ from 'underscore';
 import { ButtonGroup, Button, DropdownButton } from 'react-bootstrap';
 import { IndexablePackItem } from '../../Models/Pack';
 import MediaItemView from '../Components/MediaItemView';
-import Categories from "../../Collections/Categories";
+import { Categories } from '@often/often-core';
 import CategoryAssignmentMenu from '../Components/CategoryAssignmentMenu';
 
 interface CategoryAssignmentItemProps extends React.Props<CategoryAssignmentItem> {

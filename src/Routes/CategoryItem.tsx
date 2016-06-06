@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Grid, Row, Col, Input, Thumbnail, ButtonInput } from 'react-bootstrap';
-import Category, { CategoryAttributes } from '../../Models/Category';
+import { Category, CategoryAttributes } from '@often/often-core';
 import * as objectPath from 'object-path';
 
 interface CategoryItemProps extends React.Props<CategoryItem> {

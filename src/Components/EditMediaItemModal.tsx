@@ -1,12 +1,11 @@
 import * as React from 'react';
 import * as _ from 'underscore';
 import { Modal, Button, Alert, Grid, Row, Col} from 'react-bootstrap';
+import { IndexablePackItem, Categories, Category } from '@often/often-core';
 import MediaItemView from '../Components/MediaItemView';
-import {IndexablePackItem} from '../../Models/Pack';
 import CategoryAssignmentMenu from '../Components/CategoryAssignmentMenu';
-import Categories from '../../Collections/Categories';
-import Category from '../../Models/Category';
 import DeleteButton from '../Components/DeleteButton';
+
 const FormGroup = require('react-bootstrap/lib/FormGroup');
 const FormControl = require('react-bootstrap/lib/FormControl');
 const ControlLabel = require('react-bootstrap/lib/ControlLabel');

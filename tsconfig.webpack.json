@@ -3,12 +3,11 @@
 		"target": "es5",
 		"sourceMap": true,
 		"jsx": "react",
-		"outDir": "build"
+		"outDir": "dist"
 	},
-	"exclude": [
-		"node_modules"
-	],
 	"files": [
-		"typings/index.d.ts"
-	]
+        "typings/index.d.ts",
+        "node_modules/@often/often-core/custom-typings/custom-typings.d.ts",
+        "src/main.tsx"
+    ]
 }

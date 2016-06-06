@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { browserHistory } from 'react-router';
-import Authenticator from '../../Models/Authenticator';
-
+import Authenticator from '../Models/Authenticator';
 
 interface LogoutProps extends React.Props<Logout> {}
 interface LogoutState extends React.Props<Logout> {}

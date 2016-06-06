@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Row, Col, Grid, ButtonToolbar, Button } from 'react-bootstrap';
 import { Link } from 'react-router';
 import UserView from '../Components/UserView';
-import Users from '@often/often-core/Collections/Users';
+import { Users } from '@often/often-core';
 
 interface UsersProps extends React.Props<UsersRoute> {
 	open?: boolean;

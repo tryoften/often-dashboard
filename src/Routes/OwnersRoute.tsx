@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Row, Col, Grid, ButtonToolbar, Button } from 'react-bootstrap';
 import { Link } from 'react-router';
 import OwnerView from '../Components/OwnerView';
-import Owners from '../../Collections/Owners';
+import { Owners } from '@often/often-core';
 import PaginationControl from '../Components/PaginationControl';
 
 interface OwnersProps extends React.Props<OwnersRoute> {

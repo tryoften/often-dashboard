@@ -1,7 +1,6 @@
 import * as React from 'react';
-import Quote, { QuoteAttributes } from '../../Models/Quote';
+import { Quote,  QuoteAttributes, Owner } from '@often/often-core';
 import { Input, Modal, Button } from 'react-bootstrap';
-import Owner from "../../Models/Owner";
 import * as _ from 'underscore';
 import * as objectPath from 'object-path';
 

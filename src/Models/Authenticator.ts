@@ -1,7 +1,6 @@
 import * as Firebase from 'firebase';
-import {firebase as FirebaseConfig } from '../config';
-import User, {UserAttributes} from '../Models/User';
-
+import { firebase as FirebaseConfig } from '../config';
+import { User, UserAttributes } from '@often/often-core';
 
 interface AuthData {
 	token: string;

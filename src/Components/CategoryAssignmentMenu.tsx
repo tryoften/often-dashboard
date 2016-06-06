@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { MenuItem, DropdownButton, DropdownButtonProps } from 'react-bootstrap';
-import Categories from '../../Collections/Categories';
-import {} from "react-bootstrap";
+import { Categories } from '@often/often-core';
 
 interface CategoryAssignmentMenuProps extends React.Props<CategoryAssignmentMenu>, DropdownButtonProps {
 	categories: Categories;

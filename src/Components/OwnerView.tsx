@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Owner from "../../Models/Owner";
+import { Owner } from '@often/often-core';
 import ImageBrandMask from '../Components/ImageBrandMask';
 
 export interface OwnerViewProps extends React.Props<OwnerView> {
