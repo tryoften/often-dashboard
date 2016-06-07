@@ -1,6 +1,4 @@
-/// <reference path="../../typings/tsd.d.ts" />
 import { Route, Router, IndexRedirect, browserHistory } from 'react-router';
-import { render } from 'react-dom';
 import * as React from 'react'; // Don't remove, components need it
 import Home from './Routes/Home';
 import Packs from './Routes/PacksRoute';
@@ -15,6 +13,8 @@ import Featured from './Routes/FeaturedRoute';
 import Login from './Routes/Login';
 import Logout from './Routes/Logout';
 import Authenticator from './Models/Authenticator';
+
+const { render } = require('react-dom');
 
 function requireAuth(nextState, replace) {
 	if (!Authenticator.isAuthorized()) {

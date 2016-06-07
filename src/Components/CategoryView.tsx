@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Category from "../../Models/Category";
+import { Category } from "@often/often-core";
 
 export interface CategoryViewProps extends React.Props<CategoryView> {
 	model: Category;

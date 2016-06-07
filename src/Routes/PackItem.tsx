@@ -1,9 +1,8 @@
 import * as React from 'react';
-import * as ReactRouter from 'react-router';
 import * as classNames from 'classnames';
 import * as objectPath from 'object-path';
 import * as _ from 'underscore';
-import { Categories, Category, IndexableObject, Image,  Pack, PackAttributes, IndexablePackItem  } from '@often/often-core';
+import { Categories, Category, IndexableObject, Image, Pack, PackAttributes, IndexablePackItem } from '@often/often-core';
 import { Grid, Row, Col, Thumbnail, Glyphicon, ButtonGroup, Button } from 'react-bootstrap';
 import AddItemToPackModal from '../Components/AddItemToPackModal';
 import DeleteButton from '../Components/DeleteButton';
@@ -36,14 +35,6 @@ interface PackItemState extends React.Props<PackItem> {
 }
 
 export default class PackItem extends React.Component<PackItemProps, PackItemState> {
-	static contextTypes: React.ValidationMap<any> = {
-		router: React.PropTypes.object
-	};
-
-	context: {
-		router: ReactRouter.RouterOnContext;
-	};
-
 	constructor(props: PackItemProps) {
 		super(props);
 

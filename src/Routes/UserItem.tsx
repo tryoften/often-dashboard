@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Grid, Row, Col, Input, Thumbnail, ButtonInput } from 'react-bootstrap';
 import { User, UserAttributes } from '@often/often-core';
 import MediaItemView from '../Components/MediaItemView';
-import { IndexableObject } from "../../Interfaces/Indexable";
+import { IndexableObject } from "@often/often-core";
 import * as _ from 'underscore';
 import * as objectPath from 'object-path';
 

@@ -38,8 +38,8 @@ gulp.task('build-server', ['copy', 'less'], function () {
 
 gulp.task('dist', ['copy', 'less', 'build-server'], function () {
     return gulp.src('src/main.tsx')
-	  .pipe(webpack( require('./webpack.config.js') ))
-	  .pipe(gulp.dest('dist/'));
+      .pipe(webpack( require('./webpack.config.js') ))
+      .pipe(gulp.dest('dist/'));
 });
 
 gulp.task('server-dev', ['dist'], function () {
