@@ -1,9 +1,9 @@
 import { Row, Col, Grid, ProgressBar, Nav, NavItem } from 'react-bootstrap';
 import * as React from 'react';
 import { Link } from 'react-router';
-import Authenticator from '../../Models/Authenticator';
+import Authenticator from '../Models/Authenticator';
 import { LinkContainer } from 'react-router-bootstrap';
-import User from '../../Models/User';
+import { User } from '@often/often-core';
 
 
 interface SidebarComponentState extends React.Props<SidebarComponent> {

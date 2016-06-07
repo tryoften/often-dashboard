@@ -3,7 +3,7 @@ import * as ReactRouter from 'react-router';
 import * as classNames from 'classnames';
 import * as objectPath from 'object-path';
 import * as _ from 'underscore';
-import { Categories, Category, Pack, PackAttributes, IndexablePackItem, IndexableObject } from '@often/often-core';
+import { Categories, Category, IndexableObject, Image,  Pack, PackAttributes, IndexablePackItem  } from '@often/often-core';
 import { Grid, Row, Col, Thumbnail, Glyphicon, ButtonGroup, Button } from 'react-bootstrap';
 import AddItemToPackModal from '../Components/AddItemToPackModal';
 import DeleteButton from '../Components/DeleteButton';

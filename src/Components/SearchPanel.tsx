@@ -4,9 +4,6 @@ import SearchBar, { SearchBarState } from './SearchBar';
 import { firebase as FirebaseConfig } from '../../config';
 import SearchResultsTable from './SearchResultsTable';
 import * as Firebase from 'firebase';
-import Request from '../../Models/Request';
-import RequestType from "../../Models/RequestType";
-import Response from "../../Models/Response";
 import * as classNames from 'classnames';
 
 interface SearchPanelProps extends React.Props<SearchPanel> {
@@ -16,7 +13,6 @@ interface SearchPanelProps extends React.Props<SearchPanel> {
 
 interface SearchPanelState {
 	showModal?: boolean;
-	response?: Response;
 }
 
 export default class SearchPanel extends React.Component<SearchPanelProps, SearchPanelState> {
@@ -26,10 +22,6 @@ export default class SearchPanel extends React.Component<SearchPanelProps, Searc
 		super(props);
 
 		this.searchQueue = new Firebase(`${FirebaseConfig.BaseURL}/queues/search/tasks`);
-		this.state = {
-			response: new Response({id: "top"}),
-			showModal: this.props.show
-		};
 	}
 
 	onSearchBarChange(state: SearchBarState) {
@@ -38,25 +30,7 @@ export default class SearchPanel extends React.Component<SearchPanelProps, Searc
 		}
 
 		var id = new Buffer(state.query.trim()).toString('base64');
-		var request = new Request({
-			id: id,
-			query: {
-				text: state.query.trim()
-			},
-			type: RequestType.search
-		});
 
-		this.searchQueue.child(id).set(request.toJSON());
-		console.log(request.toJSON());
-
-		var response = new Response({
-			id: id
-		});
-
-		response.on('change', (data) => {
-			console.log(data);
-			this.setState({response});
-		});
 	}
 
 	componentWillReceiveProps(nextProps: SearchPanelProps) {
@@ -77,7 +51,6 @@ export default class SearchPanel extends React.Component<SearchPanelProps, Searc
 		let content = (
 			<div className={classes}>
 				<SearchBar onChange={this.onSearchBarChange.bind(this)} />
-				<SearchResultsTable response={this.state.response} />
 			</div>
 		);
 

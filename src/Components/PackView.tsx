@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Pack from "../../Models/Pack";
+import { Pack } from "@often/often-core";
 import { Glyphicon } from 'react-bootstrap';
 import ImageBrandMask from '../Components/ImageBrandMask';
 

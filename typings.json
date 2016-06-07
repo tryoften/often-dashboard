@@ -3,6 +3,7 @@
   "globalDependencies": {
     "backbone": "github:DefinitelyTyped/DefinitelyTyped/backbone/backbone.d.ts#e5a27ea95e47b95333784f1f0d590127b4e39a89",
     "backbone-global": "github:DefinitelyTyped/DefinitelyTyped/backbone/backbone-global.d.ts#e5a27ea95e47b95333784f1f0d590127b4e39a89",
+    "classnames": "registry:dt/classnames#0.0.0+20160316155526",
     "es6-shim": "github:DefinitelyTyped/DefinitelyTyped/es6-shim/es6-shim.d.ts#bf4ecf5b68887ed5a065e3922885c34d0f5739df",
     "express": "registry:dt/express#4.0.0+20160317120654",
     "express-serve-static-core": "registry:dt/express-serve-static-core#0.0.0+20160602151406",
@@ -14,12 +15,14 @@
     "object-hash": "github:DefinitelyTyped/DefinitelyTyped/object-hash/object-hash.d.ts#edb64e4a35896510ce02b93c0bca5ec3878db738",
     "react-addons-css-transition-group": "registry:dt/react-addons-css-transition-group#0.14.0+20160316155526",
     "react-bootstrap": "registry:dt/react-bootstrap#0.0.0+20160526141239",
+    "react-dom": "registry:dt/react-dom#0.14.0+20160412154040",
     "serve-static": "registry:dt/serve-static#0.0.0+20160606155157",
     "underscore": "github:DefinitelyTyped/DefinitelyTyped/underscore/underscore.d.ts#e5a27ea95e47b95333784f1f0d590127b4e39a89"
   },
   "dependencies": {
     "object-path": "registry:npm/object-path#0.9.0+20160217162032",
     "react": "registry:npm/react#15.0.1+20160601175240",
-    "react-router": "registry:npm/react-router#2.0.0+20160214194820"
+    "react-router": "registry:npm/react-router#2.0.0+20160214194820",
+    "validator": "registry:npm/validator#4.5.1+20160429171724"
   }
 }

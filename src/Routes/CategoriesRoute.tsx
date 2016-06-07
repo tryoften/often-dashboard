@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Row, Col, Grid, ButtonToolbar, Button } from 'react-bootstrap';
 import { Link } from 'react-router';
 import CategoryView from '../Components/CategoryView';
-import Categories from '../../Collections/Categories';
+import { Categories } from '@often/often-core';
 
 interface CategoriesProps extends React.Props<CategoriesRoute> {
 	open?: boolean;
