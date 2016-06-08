@@ -1,13 +1,13 @@
 var path = require('path');
 var webpack = require('webpack');
 var WebpackDevServer = require('webpack-dev-server');
-var config = require('./webpack.dev.config');
+var config = require('../webpack.dev.config');
 
 var compiler = webpack(config);
 
 var server = new WebpackDevServer(compiler, {
 	hot: true,
-	contentBase: './public/',
+	contentBase: './src/public/',
 	publicPath: config.output.publicPath,
 	historyApiFallback: true,
 	stats: {

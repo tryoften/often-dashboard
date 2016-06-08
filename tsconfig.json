@@ -12,7 +12,7 @@
 		"experimentalDecorators": true
     },
     "files": [
-        "typings/index.d.ts",
+        "typings/tsd.d.ts",
         "node_modules/@often/often-core/custom-typings/custom-typings.d.ts",
         "src/server.ts",
         "src/server-dev.ts"

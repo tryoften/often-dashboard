@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as _ from 'underscore';
+import * as Firebase from 'firebase';
+import { isURL } from 'validator';
 import { Modal, Tabs, Tab, Button, Thumbnail, Alert} from 'react-bootstrap';
 import { Images, Image } from '@often/often-core';
-import * as Firebase from 'firebase';
-import { firebase as FirebaseConfig } from '../../config';
-import { isURL } from 'validator';
+import { firebase as FirebaseConfig } from '../config';
 
 const FormGroup = require('react-bootstrap/lib/FormGroup');
 const FormControl = require('react-bootstrap/lib/FormControl');

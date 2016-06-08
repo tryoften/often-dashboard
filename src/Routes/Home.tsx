@@ -4,6 +4,7 @@ import * as ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 interface HomeProps extends ReactRouter.RouteComponentProps<Home, {}> {
 	open?: boolean;
+	location?: any;
 }
 
 export default class Home extends React.Component<HomeProps, {}> {

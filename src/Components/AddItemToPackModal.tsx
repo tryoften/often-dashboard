@@ -1,10 +1,9 @@
 import * as React from 'react';
 import * as _ from 'underscore';
 import { Modal, Tabs, Tab, Button, DropdownButton, MenuItem } from 'react-bootstrap';
-import SearchPanel from '../Components/SearchPanel';
 import { Owners, Owner, MediaItemType } from '@often/often-core';
 import MediaItemView from '../Components/MediaItemView';
-import { IndexablePackItem } from '@often/often-core/Models/Pack';
+import { IndexablePackItem } from '@often/often-core/src/often-core/Models/Pack';
 
 const shallowCompare = require('react-addons-shallow-compare');
 
@@ -149,9 +148,6 @@ export default class AddItemToPackModal extends React.Component<AddItemToPackMod
 									<div className="items">{ownerQuotes}</div>
 								</div>
 							</div>
-						</Tab>
-						<Tab eventKey={1} title="Find Lyric or Quote">
-							<SearchPanel presentInModal={false} />
 						</Tab>
 					</Tabs>
 				</Modal.Body>
