@@ -1,0 +1,87 @@
+{
+  "version": "v4",
+  "repo": "borisyankov/DefinitelyTyped",
+  "ref": "master",
+  "path": "typings",
+  "bundle": "typings/tsd.d.ts",
+  "installed": {
+    "backbone/backbone.d.ts": {
+      "commit": "e5a27ea95e47b95333784f1f0d590127b4e39a89"
+    },
+    "underscore/underscore.d.ts": {
+      "commit": "e5a27ea95e47b95333784f1f0d590127b4e39a89"
+    },
+    "jquery/jquery.d.ts": {
+      "commit": "e5a27ea95e47b95333784f1f0d590127b4e39a89"
+    },
+    "backbone/backbone-global.d.ts": {
+      "commit": "e5a27ea95e47b95333784f1f0d590127b4e39a89"
+    },
+    "express/express.d.ts": {
+      "commit": "dc9dabe74a5be62613b17a3605309783a12ff28a"
+    },
+    "serve-static/serve-static.d.ts": {
+      "commit": "dc9dabe74a5be62613b17a3605309783a12ff28a"
+    },
+    "node/node.d.ts": {
+      "commit": "dc9dabe74a5be62613b17a3605309783a12ff28a"
+    },
+    "mime/mime.d.ts": {
+      "commit": "dc9dabe74a5be62613b17a3605309783a12ff28a"
+    },
+    "minimist/minimist.d.ts": {
+      "commit": "1469ae2d0c260c082517bfb971be8c14e2389fe5"
+    },
+    "cheerio/cheerio.d.ts": {
+      "commit": "1469ae2d0c260c082517bfb971be8c14e2389fe5"
+    },
+    "react/react.d.ts": {
+      "commit": "73f7bb99692823f1811817f9753a02b57af5305e"
+    },
+    "react/react-dom.d.ts": {
+      "commit": "a44529fcb1e1cdc0355e71c42a6048de99b57c34"
+    },
+    "react-router/react-router.d.ts": {
+      "commit": "299b5caa22876ef27dc8e9a5b7fd7bf93457b6f4"
+    },
+    "react-router/history.d.ts": {
+      "commit": "299b5caa22876ef27dc8e9a5b7fd7bf93457b6f4"
+    },
+    "react-bootstrap/react-bootstrap.d.ts": {
+      "commit": "73f7bb99692823f1811817f9753a02b57af5305e"
+    },
+    "classnames/classnames.d.ts": {
+      "commit": "dc6d1ebfaa554e85b91846574728930972ca9868"
+    },
+    "react-router-bootstrap/react-router-bootstrap.d.ts": {
+      "commit": "299b5caa22876ef27dc8e9a5b7fd7bf93457b6f4"
+    },
+    "es6-shim/es6-shim.d.ts": {
+      "commit": "bf4ecf5b68887ed5a065e3922885c34d0f5739df"
+    },
+    "node-schedule/node-schedule.d.ts": {
+      "commit": "ee9c524295333250ddbc7364f27c8b2ccd84b18a"
+    },
+    "react/react-addons-css-transition-group.d.ts": {
+      "commit": "bf4ecf5b68887ed5a065e3922885c34d0f5739df"
+    },
+    "react/react-addons-transition-group.d.ts": {
+      "commit": "bf4ecf5b68887ed5a065e3922885c34d0f5739df"
+    },
+    "object-path/object-path.d.ts": {
+      "commit": "e8f8e7471b8ca92ca417f8c878f64ae4d1067972"
+    },
+    "object-hash/object-hash.d.ts": {
+      "commit": "544a35a10866b32afda9c7f029c0764558563f4f"
+    },
+    "react-dnd/react-dnd.d.ts": {
+      "commit": "310c247694d7f31bd2e3198f71c55221f7c3a3c7"
+    },
+    "validator/validator.d.ts": {
+      "commit": "e69daec7f79c0c25c4653f866e5cadb5bb7a01ca"
+    },
+    "firebase/firebase.d.ts": {
+      "commit": "e0e746833c4cd61e07f24d00e32baa9481e7ba59"
+    }
+  }
+}

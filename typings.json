@@ -7,7 +7,7 @@
     "es6-shim": "github:DefinitelyTyped/DefinitelyTyped/es6-shim/es6-shim.d.ts#bf4ecf5b68887ed5a065e3922885c34d0f5739df",
     "express": "registry:dt/express#4.0.0+20160317120654",
     "express-serve-static-core": "registry:dt/express-serve-static-core#0.0.0+20160602151406",
-    "firebase": "github:DefinitelyTyped/DefinitelyTyped/firebase/firebase.d.ts#edb64e4a35896510ce02b93c0bca5ec3878db738",
+    "firebase": "registry:dt/firebase#2.4.1+20160412125105",
     "firebase-token-generator": "github:DefinitelyTyped/DefinitelyTyped/firebase-token-generator/firebase-token-generator.d.ts#edb64e4a35896510ce02b93c0bca5ec3878db738",
     "jquery": "github:DefinitelyTyped/DefinitelyTyped/jquery/jquery.d.ts#e5a27ea95e47b95333784f1f0d590127b4e39a89",
     "mime": "registry:dt/mime#0.0.0+20160316155526",

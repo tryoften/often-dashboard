@@ -2,7 +2,6 @@
 var webpack = require('webpack');
 var WebpackConfig = require('webpack-config');
 var path = require("path");
-
 var mainConfig = new WebpackConfig().extend("webpack.config");
 var publicPath = path.resolve(__dirname, "src/public");
 

@@ -4,9 +4,7 @@ var path = require("path");
 var webpackShared = require("./webpack.shared");
 var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
-
 var nodeModulesPath = path.join(__dirname, 'node_modules');
-
 
 var config = {
 	// entry points - each will produce one bundled js file and one css file if there is any css in dependency tree

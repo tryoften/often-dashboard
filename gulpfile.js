@@ -16,7 +16,7 @@ gulp.task('clean', function () {
 gulp.task('copy', ['clean'], function () {
     return gulp
         .src([
-            'src/public/**/*.*'
+            './public/**/*.*'
         ], {base: './src'})
         .pipe(gulp.dest('dist'));
 });
@@ -36,7 +36,7 @@ gulp.task('build-server', ['copy', 'less'], function () {
         }));
 });
 
-gulp.task('dist', ['copy', 'less', 'build-server'], function () {
+gulp.task('dist', ['build-server'], function () {
     return gulp.src('src/main.tsx')
       .pipe(webpack( require('./webpack.config.js') ))
       .pipe(gulp.dest('dist/'));
@@ -49,7 +49,7 @@ gulp.task('server-dev', ['dist'], function () {
     // Restart the server when file changes
     gulp.watch('src/views/**/*.*', ['copy', 'less']);
     gulp.watch(['src/less/**/*.less'], ['less']);
-    gulp.watch(['app/scripts/**/*.js'], ['jshint']);
-    gulp.watch(['app/images/**/*'], server.notify);
-    gulp.watch(['src/app.ts', 'routes/**/*.js'], [server.run]);
+    gulp.watch(['src/public/scripts/**/*.js'], ['jshint']);
+    gulp.watch(['src/public/img/**/*'], server.notify);
+    gulp.watch(['src/main.tsx', 'routes/**/*.js'], [server.run]);
 });

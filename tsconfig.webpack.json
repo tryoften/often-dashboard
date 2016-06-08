@@ -6,7 +6,7 @@
 		"outDir": "dist"
 	},
 	"files": [
-        "typings/index.d.ts",
+        "typings/tsd.d.ts",
         "node_modules/@often/often-core/custom-typings/custom-typings.d.ts",
         "src/main.tsx"
     ]

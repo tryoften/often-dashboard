@@ -216,7 +216,7 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		this.state.model.save({
 			deleted: true
 		});
-		this.context.router.push('/packs');
+		//this.context.router.push('/packs');
 	}
 
 	getResizedImage(image: Image) {

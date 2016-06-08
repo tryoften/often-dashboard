@@ -149,9 +149,6 @@ export default class AddItemToPackModal extends React.Component<AddItemToPackMod
 								</div>
 							</div>
 						</Tab>
-						<Tab eventKey={1} title="Find Lyric or Quote">
-							<SearchPanel presentInModal={false} />
-						</Tab>
 					</Tabs>
 				</Modal.Body>
 				<Modal.Footer>
