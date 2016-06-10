@@ -14,6 +14,7 @@ import PaginationControl from '../Components/PaginationControl';
 const FormGroup = require('react-bootstrap/lib/FormGroup');
 const FormControl = require('react-bootstrap/lib/FormControl');
 const ControlLabel = require('react-bootstrap/lib/ControlLabel');
+const prodRootUrl = 'https://jakub-test-4d7f6.firebaseio.com';
 
 interface PackItemProps extends React.Props<PackItem> {
 	params: {
@@ -79,7 +80,7 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		}, {
 			autoSync: false,
 			setObjectMap: true,
-			prodRoot: true
+			prodRoot: prodRootUrl
 		});
 
 		let categories = new Categories();
