@@ -5,7 +5,7 @@ import * as _ from 'underscore';
 import { Categories, Category, IndexableObject, Image, Pack, PackAttributes, IndexablePackItem } from '@often/often-core';
 import { Grid, Row, Col, Thumbnail, Glyphicon, ButtonGroup, Button } from 'react-bootstrap';
 import AddItemToPackModal from '../Components/AddItemToPackModal';
-import DeleteButton from '../Components/DeleteButton';
+import ConfirmationButton from '../Components/ConfirmationButton';
 import MediaItemView from '../Components/MediaItemView';
 import ImageSelectionModal from '../Components/ImageSelectionModal';
 import EditMediaItemModal from '../Components/EditMediaItemModal';
@@ -14,6 +14,7 @@ import PaginationControl from '../Components/PaginationControl';
 const FormGroup = require('react-bootstrap/lib/FormGroup');
 const FormControl = require('react-bootstrap/lib/FormControl');
 const ControlLabel = require('react-bootstrap/lib/ControlLabel');
+const rootUrl = 'https://often-prod.firebaseio.com';
 
 interface PackItemProps extends React.Props<PackItem> {
 	params: {
@@ -23,18 +24,20 @@ interface PackItemProps extends React.Props<PackItem> {
 
 interface PackItemState extends React.Props<PackItem> {
 	model?: Pack;
+	prodPack?: Pack;
 	shouldShowSearchPanel?: boolean;
 	shouldShowImageSelectionPanel?: boolean;
 	shouldShowEditMediaItemModal?: boolean;
-	display?: boolean;
 	isNew?: boolean;
 	form?: PackAttributes;
 	categories?: Categories;
 	loading?: boolean;
+	loadingProdPack?: boolean;
 	selectedItem?: IndexableObject;
 }
 
 export default class PackItem extends React.Component<PackItemProps, PackItemState> {
+
 	constructor(props: PackItemProps) {
 		super(props);
 
@@ -43,11 +46,13 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		this.state = {
 			shouldShowSearchPanel: false,
 			shouldShowEditMediaItemModal: false,
-			display: false,
+			loading: true,
+			loadingProdPack: true,
 			isNew: isNew
 		};
 
 		this.updateStateWithPack = this.updateStateWithPack.bind(this);
+		this.updateStateWithProdPack = this.updateStateWithProdPack.bind(this);
 		this.handlePropChange = this.handlePropChange.bind(this);
 		this.handleUpdate = this.handleUpdate.bind(this);
 		this.onClickAddItem = this.onClickAddItem.bind(this);
@@ -62,6 +67,7 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		this.onSetItemPosition = this.onSetItemPosition.bind(this);
 		this.onCloseEditMediaItemModal = this.onCloseEditMediaItemModal.bind(this);
 		this.onCloseImageSelectionModal = this.onCloseImageSelectionModal.bind(this);
+		this.onClickUpdateProd = this.onClickUpdateProd.bind(this);
 	}
 
 	componentDidMount() {
@@ -69,22 +75,37 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 			id: this.props.params.packId
 		});
 
+		let prodPack = new Pack({
+			id: pack.id
+		}, {
+			autoSync: false,
+			setObjectMap: true,
+			rootUrl: rootUrl
+		});
+
 		let categories = new Categories();
 
 		let state = {
 			model: pack,
+			prodPack: prodPack,
 			form: pack.toJSON(),
 			categories: categories
 		};
 
 		pack.on('update', this.updateStateWithPack);
+		prodPack.on('update', this.updateStateWithProdPack);
 		categories.on('update', this.updateStateWithCategories);
 
 		this.setState(state);
 
-		pack.fetch({
-			success: this.updateStateWithPack
+		pack.syncData().then(() => {
+			this.updateStateWithPack(pack);
 		});
+
+		prodPack.syncData().then(() => {
+			this.updateStateWithProdPack(prodPack);
+		});
+
 		categories.fetch({
 			success: this.updateStateWithCategories
 		});
@@ -92,16 +113,27 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 
 	componentWillUnmount() {
 		this.state.model.off('update', this.updateStateWithPack);
+		this.state.prodPack.off('update', this.updateStateWithProdPack);
 		this.state.categories.off('update', this.updateStateWithCategories);
 	}
 
 	updateStateWithPack(pack: Pack) {
+		console.log('loaded pack');
 		this.setState({
 			model: pack,
 			form: pack.toJSON(),
-			display: true
+			loading: false
 		});
 	}
+
+	updateStateWithProdPack(pack: Pack) {
+		console.log('loaded prod pack');
+		this.setState({
+			prodPack: pack,
+			loadingProdPack: false
+		})
+	}
+
 
 	updateStateWithCategories(categories: Categories) {
 		this.setState({categories});
@@ -263,12 +295,18 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		return -1;
 	}
 
+	onClickUpdateProd() {
+		let pack = this.state.model;
+		let prodPack = this.state.prodPack;
+		prodPack.save(pack.toJSON());
+	}
+
 	render() {
-		if (!this.state.display) {
+		if (this.state.loading) {
 			return <div>Loading...</div>;
 		}
 
-		let classes = classNames("section pack-item", {hidden: !this.state.display});
+		let classes = classNames("section pack-item", {hidden: this.state.loading});
 		let form = this.state.form;
 
 		let items = this.state.model.items.map( (item, index) => {
@@ -282,6 +320,16 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 				</div>
 			);
 		});
+		let disableUpload = this.state.loading || this.state.loadingProdPack; //If both packs have loaded then 'name' attributes should be present on both of them
+		let copyToProdButton = (
+			<ConfirmationButton
+				onConfirmation={this.onClickUpdateProd}
+				confirmationText="Are you sure you want to upload this pack to production?"
+				disabled={disableUpload}
+				bsStyle="default"
+			>
+				<Glyphicon glyph="upload"/>Update To Prod
+			</ConfirmationButton>);
 
 		return (
 			<div className={classes}>
@@ -355,9 +403,14 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 										<Button onClick={this.onClickAddItem}><Glyphicon glyph="plus-sign" />Add Item</Button>
 									</div>
 								</Col>
+								<Col xs={2}>
+									<div className="pull-right">
+										{copyToProdButton}
+									</div>
+								</Col>
 								<Col xs={4}>
 									<div className="pull-right">
-										<DeleteButton onConfirmation={this.onDelete} />
+										<ConfirmationButton onConfirmation={this.onDelete} bsStyle="danger"> Delete </ConfirmationButton>
 									</div>
 								</Col>
 							</Row>
