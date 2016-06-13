@@ -14,7 +14,7 @@ import PaginationControl from '../Components/PaginationControl';
 const FormGroup = require('react-bootstrap/lib/FormGroup');
 const FormControl = require('react-bootstrap/lib/FormControl');
 const ControlLabel = require('react-bootstrap/lib/ControlLabel');
-const rootUrl = 'https://jakub-test-4d7f6.firebaseio.com';
+const rootUrl = 'https://often-prod.firebaseio.com';
 
 interface PackItemProps extends React.Props<PackItem> {
 	params: {
