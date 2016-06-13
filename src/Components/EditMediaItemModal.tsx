@@ -4,7 +4,7 @@ import { Modal, Button, Alert, Grid, Row, Col} from 'react-bootstrap';
 import { IndexablePackItem, Categories, Category } from '@often/often-core';
 import MediaItemView from '../Components/MediaItemView';
 import CategoryAssignmentMenu from '../Components/CategoryAssignmentMenu';
-import PopUpButton from '../Components/PopUpButton';
+import ConfirmationButton from '../Components/ConfirmationButton';
 
 const FormGroup = require('react-bootstrap/lib/FormGroup');
 const FormControl = require('react-bootstrap/lib/FormControl');
@@ -196,7 +196,7 @@ export default class EditMediaItemModal extends React.Component<EditMediaItemMod
 							<Button onClick={this.cancel}>Cancel</Button>
 						</Col>
 						<Col md={1} mdOffset={7}>
-							<PopUpButton bsStyle="default" onConfirmation={this.onClickRemove}> Remove </PopUpButton>
+							<ConfirmationButton bsStyle="default" onConfirmation={this.onClickRemove}> Remove </ConfirmationButton>
 						</Col>
 						<Col md={1} mdOffset={1} className="column-right-tilt">
 							<Button className="save-button" onClick={this.save} disabled={!(this.state.categoryChanged || this.state.placementChanged)}>Save</Button>

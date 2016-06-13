@@ -5,7 +5,7 @@ import * as _ from 'underscore';
 import { Categories, Category, IndexableObject, Image, Pack, PackAttributes, IndexablePackItem } from '@often/often-core';
 import { Grid, Row, Col, Thumbnail, Glyphicon, ButtonGroup, Button } from 'react-bootstrap';
 import AddItemToPackModal from '../Components/AddItemToPackModal';
-import PopUpButton from '../Components/PopUpButton';
+import ConfirmationButton from '../Components/ConfirmationButton';
 import MediaItemView from '../Components/MediaItemView';
 import ImageSelectionModal from '../Components/ImageSelectionModal';
 import EditMediaItemModal from '../Components/EditMediaItemModal';
@@ -14,7 +14,7 @@ import PaginationControl from '../Components/PaginationControl';
 const FormGroup = require('react-bootstrap/lib/FormGroup');
 const FormControl = require('react-bootstrap/lib/FormControl');
 const ControlLabel = require('react-bootstrap/lib/ControlLabel');
-const prodRootUrl = 'https://jakub-test-4d7f6.firebaseio.com';
+const rootUrl = 'https://jakub-test-4d7f6.firebaseio.com';
 
 interface PackItemProps extends React.Props<PackItem> {
 	params: {
@@ -80,7 +80,7 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		}, {
 			autoSync: false,
 			setObjectMap: true,
-			prodRoot: prodRootUrl
+			rootUrl: rootUrl
 		});
 
 		let categories = new Categories();
@@ -322,14 +322,14 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		});
 		let disableUpload = this.state.loading || this.state.loadingProdPack; //If both packs have loaded then 'name' attributes should be present on both of them
 		let copyToProdButton = (
-			<PopUpButton
+			<ConfirmationButton
 				onConfirmation={this.onClickUpdateProd}
 				confirmationText="Are you sure you want to upload this pack to production?"
 				disabled={disableUpload}
 				bsStyle="default"
 			>
 				<Glyphicon glyph="upload"/>Update To Prod
-			</PopUpButton>);
+			</ConfirmationButton>);
 
 		return (
 			<div className={classes}>
@@ -410,7 +410,7 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 								</Col>
 								<Col xs={4}>
 									<div className="pull-right">
-										<PopUpButton onConfirmation={this.onDelete} bsStyle="danger"> Delete </PopUpButton>
+										<ConfirmationButton onConfirmation={this.onDelete} bsStyle="danger"> Delete </ConfirmationButton>
 									</div>
 								</Col>
 							</Row>
