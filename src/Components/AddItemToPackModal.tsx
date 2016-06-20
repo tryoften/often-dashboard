@@ -92,7 +92,6 @@ export default class AddItemToPackModal extends React.Component<AddItemToPackMod
 		});
 	}
 
-
 	onSaveChanges(e) {
 		e.preventDefault();
 		this.props.onUpdatePackItems(this.state.selectedItems);

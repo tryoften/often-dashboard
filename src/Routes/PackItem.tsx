@@ -4,17 +4,17 @@ import * as objectPath from 'object-path';
 import * as _ from 'underscore';
 import { Categories, Category, IndexableObject, Image, Pack, PackAttributes, IndexablePackItem } from '@often/often-core';
 import { Grid, Row, Col, Thumbnail, Glyphicon, ButtonGroup, Button } from 'react-bootstrap';
+import { firebase as FirebaseConfig } from '../config';
 import AddItemToPackModal from '../Components/AddItemToPackModal';
 import ConfirmationButton from '../Components/ConfirmationButton';
 import MediaItemView from '../Components/MediaItemView';
 import ImageSelectionModal from '../Components/ImageSelectionModal';
 import EditMediaItemModal from '../Components/EditMediaItemModal';
 import PaginationControl from '../Components/PaginationControl';
-
 const FormGroup = require('react-bootstrap/lib/FormGroup');
 const FormControl = require('react-bootstrap/lib/FormControl');
 const ControlLabel = require('react-bootstrap/lib/ControlLabel');
-const rootUrl = 'https://often-prod.firebaseio.com';
+
 
 interface PackItemProps extends React.Props<PackItem> {
 	params: {
@@ -80,7 +80,7 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		}, {
 			autoSync: false,
 			setObjectMap: true,
-			rootUrl: rootUrl
+			rootURL: FirebaseConfig.CloneURL
 		});
 
 		let categories = new Categories();
@@ -118,7 +118,6 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 	}
 
 	updateStateWithPack(pack: Pack) {
-		console.log('loaded pack');
 		this.setState({
 			model: pack,
 			form: pack.toJSON(),
@@ -127,7 +126,6 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 	}
 
 	updateStateWithProdPack(pack: Pack) {
-		console.log('loaded prod pack');
 		this.setState({
 			prodPack: pack,
 			loadingProdPack: false
