@@ -117,8 +117,6 @@ export default class AddItemToPackModal extends React.Component<AddItemToPackMod
 
 		}) : "";
 
-
-
 		let gifs =  this.state.selectedOwner ? Object.keys(this.state.selectedOwner.get('gifs') || []).map(key => {
 			let item = this.state.selectedOwner.get('gifs')[key];
 			let foundGif = _.findWhere(this.state.selectedItems, {
