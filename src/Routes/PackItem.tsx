@@ -80,7 +80,7 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		}, {
 			autoSync: false,
 			setObjectMap: true,
-			rootURL: FirebaseConfig.cloneURL
+			rootURL: FirebaseConfig.CloneURL
 		});
 
 		let categories = new Categories();
