@@ -14,7 +14,7 @@ import PaginationControl from '../Components/PaginationControl';
 const FormGroup = require('react-bootstrap/lib/FormGroup');
 const FormControl = require('react-bootstrap/lib/FormControl');
 const ControlLabel = require('react-bootstrap/lib/ControlLabel');
-const rootUrl = 'https://often-prod.firebaseio.com';
+const rootURL = 'https://often-prod.firebaseio.com';
 
 interface PackItemProps extends React.Props<PackItem> {
 	params: {
@@ -80,7 +80,7 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		}, {
 			autoSync: false,
 			setObjectMap: true,
-			rootUrl: rootUrl
+			rootURL: rootURL
 		});
 
 		let categories = new Categories();
@@ -118,7 +118,6 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 	}
 
 	updateStateWithPack(pack: Pack) {
-		console.log('loaded pack');
 		this.setState({
 			model: pack,
 			form: pack.toJSON(),
@@ -127,7 +126,6 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 	}
 
 	updateStateWithProdPack(pack: Pack) {
-		console.log('loaded prod pack');
 		this.setState({
 			prodPack: pack,
 			loadingProdPack: false

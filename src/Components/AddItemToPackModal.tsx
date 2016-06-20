@@ -92,7 +92,6 @@ export default class AddItemToPackModal extends React.Component<AddItemToPackMod
 		});
 	}
 
-
 	onSaveChanges(e) {
 		e.preventDefault();
 		this.props.onUpdatePackItems(this.state.selectedItems);
@@ -117,6 +116,8 @@ export default class AddItemToPackModal extends React.Component<AddItemToPackMod
 			return (<MediaItemView key={key} item={quote} onSelect={this.onSelectItem.bind(this)} selected={!!foundQuote} />);
 
 		}) : "";
+
+
 
 		let gifs =  this.state.selectedOwner ? Object.keys(this.state.selectedOwner.get('gifs') || []).map(key => {
 			let item = this.state.selectedOwner.get('gifs')[key];
