@@ -77,6 +77,7 @@ export default class Login extends React.Component<LoginProps, LoginState> {
 	onThirdPartyProviderClick (e: any) {
 		e.preventDefault();
 		let provider = e.target.target;
+
 		Authenticator.authWithProvider(provider)
 			.then(() => this.setAuthState())
 			.catch( err => this.unsetAuthState(err.message));

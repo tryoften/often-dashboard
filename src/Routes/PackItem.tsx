@@ -3,18 +3,17 @@ import * as classNames from 'classnames';
 import * as objectPath from 'object-path';
 import * as _ from 'underscore';
 import { Categories, Category, IndexableObject, Image, Pack, PackAttributes, IndexablePackItem } from '@often/often-core';
-import { Grid, Row, Col, Thumbnail, Glyphicon, ButtonGroup, Button } from 'react-bootstrap';
+import { Grid, Row, Col, Thumbnail, Glyphicon, ButtonToolbar, ButtonGroup, Button } from 'react-bootstrap';
 import { firebase as FirebaseConfig } from '../config';
+import { production as prodApp } from '../db';
+
 import AddItemToPackModal from '../Components/AddItemToPackModal';
 import ConfirmationButton from '../Components/ConfirmationButton';
 import MediaItemView from '../Components/MediaItemView';
 import ImageSelectionModal from '../Components/ImageSelectionModal';
 import EditMediaItemModal from '../Components/EditMediaItemModal';
 import PaginationControl from '../Components/PaginationControl';
-const FormGroup = require('react-bootstrap/lib/FormGroup');
-const FormControl = require('react-bootstrap/lib/FormControl');
-const ControlLabel = require('react-bootstrap/lib/ControlLabel');
-
+import PackEditModal from '../Components/PackEditModal';
 
 interface PackItemProps extends React.Props<PackItem> {
 	params: {
@@ -24,15 +23,13 @@ interface PackItemProps extends React.Props<PackItem> {
 
 interface PackItemState extends React.Props<PackItem> {
 	model?: Pack;
-	prodPack?: Pack;
-	shouldShowSearchPanel?: boolean;
+	shouldShowAddItemModal?: boolean;
 	shouldShowImageSelectionPanel?: boolean;
 	shouldShowEditMediaItemModal?: boolean;
 	isNew?: boolean;
 	form?: PackAttributes;
 	categories?: Categories;
 	loading?: boolean;
-	loadingProdPack?: boolean;
 	selectedItem?: IndexableObject;
 }
 
@@ -44,17 +41,15 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		let isNew = !props.params.packId;
 
 		this.state = {
-			shouldShowSearchPanel: false,
+			shouldShowAddItemModal: false,
 			shouldShowEditMediaItemModal: false,
+			shouldShowImageSelectionPanel: false,
 			loading: true,
 			loadingProdPack: true,
 			isNew: isNew
 		};
 
 		this.updateStateWithPack = this.updateStateWithPack.bind(this);
-		this.updateStateWithProdPack = this.updateStateWithProdPack.bind(this);
-		this.handlePropChange = this.handlePropChange.bind(this);
-		this.handleUpdate = this.handleUpdate.bind(this);
 		this.onClickAddItem = this.onClickAddItem.bind(this);
 		this.togglePublish = this.togglePublish.bind(this);
 		this.onDelete = this.onDelete.bind(this);
@@ -75,35 +70,21 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 			id: this.props.params.packId
 		});
 
-		let prodPack = new Pack({
-			id: pack.id
-		}, {
-			autoSync: false,
-			setObjectMap: true,
-			rootURL: FirebaseConfig.CloneURL
-		});
-
 		let categories = new Categories();
 
 		let state = {
 			model: pack,
-			prodPack: prodPack,
 			form: pack.toJSON(),
 			categories: categories
 		};
 
 		pack.on('update', this.updateStateWithPack);
-		prodPack.on('update', this.updateStateWithProdPack);
 		categories.on('update', this.updateStateWithCategories);
 
 		this.setState(state);
 
 		pack.syncData().then(() => {
 			this.updateStateWithPack(pack);
-		});
-
-		prodPack.syncData().then(() => {
-			this.updateStateWithProdPack(prodPack);
 		});
 
 		categories.fetch({
@@ -113,7 +94,6 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 
 	componentWillUnmount() {
 		this.state.model.off('update', this.updateStateWithPack);
-		this.state.prodPack.off('update', this.updateStateWithProdPack);
 		this.state.categories.off('update', this.updateStateWithCategories);
 	}
 
@@ -125,26 +105,16 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		});
 	}
 
-	updateStateWithProdPack(pack: Pack) {
-		this.setState({
-			prodPack: pack,
-			loadingProdPack: false
-		})
-	}
-
-
 	updateStateWithCategories(categories: Categories) {
 		this.setState({categories});
 	}
 
 	onSetItemCategory(itemId: string, category: Category) {
-
 		let model = this.state.model;
 		model.assignCategoryToItem(itemId, category);
 		this.setState({
 			model: model
 		});
-
 	}
 
 	onSetItemPosition(itemId: string, newPosition: number) {
@@ -197,43 +167,6 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		});
 	}
 
-	handlePropChange(e: any) {
-		let target = e.target;
-		let id = target.id;
-		let form = this.state.form;
-		let value = target.value;
-
-		switch (target.type) {
-			case 'number':
-				value = parseFloat(value);
-				break;
-			case 'checkbox':
-				value = target.checked;
-				break;
-			default:
-				break;
-		}
-
-		objectPath.set(form, id, value);
-		this.setState({form});
-	}
-
-	handleUpdate(e) {
-		e.preventDefault();
-
-		let model = this.state.model;
-		let form = this.state.form;
-
-		var diff = model.featured !== form.featured;
-		model.save(this.state.form);
-		/* Check if there's a discrepancy between featured flag on model and form */
-		if (diff) {
-			model.updateFeatured();
-		}
-		this.setState({model: model, isNew: false, form: model.toJSON()});
-
-	}
-
 	togglePublish(e) {
 		let form = this.state.form;
 		form.published = !form.published;
@@ -246,7 +179,6 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		this.state.model.save({
 			deleted: true
 		});
-		//this.context.router.push('/packs');
 	}
 
 	getResizedImage(image: Image) {
@@ -278,7 +210,6 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		});
 	}
 
-
 	onClickEditMediaItem(item: IndexablePackItem) {
 		this.setState({
 			selectedItem: item,
@@ -295,7 +226,15 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 
 	onClickUpdateProd() {
 		let pack = this.state.model;
-		let prodPack = this.state.prodPack;
+
+		let prodPack = new Pack({
+			id: pack.id
+		}, {
+			autoSync: false,
+			setObjectMap: true,
+			rootRef: prodApp.database()
+		});
+
 		prodPack.save(pack.toJSON());
 	}
 
@@ -309,25 +248,18 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 
 		let items = this.state.model.items.map( (item, index) => {
 			return (
-				<div key={item._id} id={item._id} className="clearfix well pack-item" onClick={this.onClickEditMediaItem.bind(this, item)}>
-					<div className="index-display">{index + 1}</div>
-					<MediaItemView
-						key={item._id}
-						item={item}
-					/>
+				<div key={item._id}
+					 id={item._id}
+					 className="clearfix well pack-item"
+					 onClick={this.onClickEditMediaItem.bind(this, item)}>
+						<div className="index-display">{index + 1}</div>
+						<MediaItemView
+							key={item._id}
+							item={item}
+						/>
 				</div>
 			);
 		});
-		let disableUpload = this.state.loading || this.state.loadingProdPack; //If both packs have loaded then 'name' attributes should be present on both of them
-		let copyToProdButton = (
-			<ConfirmationButton
-				onConfirmation={this.onClickUpdateProd}
-				confirmationText="Are you sure you want to upload this pack to production?"
-				disabled={disableUpload}
-				bsStyle="default"
-			>
-				<Glyphicon glyph="upload"/>Update To Prod
-			</ConfirmationButton>);
 
 		return (
 			<div className={classes}>
@@ -335,82 +267,39 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 					<h2>{this.state.model.name}</h2>
 				</header>
 
-				<Grid fluid={true}>
+				<Grid fluid={false}>
 					<Row>
 						<Col xs={12} md={8}>
-							<Row>
-								<Col xs={12} md={8}>
-									<FormGroup>
-										<ControlLabel>Name</ControlLabel>
-										<FormControl
-											id="name"
-											type="text"
-											placeholder="Enter Name"
-											value={form.name}
-											onChange={this.handlePropChange}/>
-									</FormGroup>
-									<FormGroup>
-										<ControlLabel>Description</ControlLabel>
-										<FormControl
-											id="description"
-											type="text"
-											placeholder="Description"
-											value={form.description}
-											onChange={this.handlePropChange}/>
-									</FormGroup>
-								</Col>
+							<Row className="pack-info">
+								<div className="image-upload pack-thumbnail">
+									<Thumbnail src={form.image.small_url} onClick={this.onClickSelectImage} />
+								</div>
+								<div className="meta">
+									<div className="name">{form.name}</div>
+									<div className="description">{form.description}</div>
+								</div>
 							</Row>
 							<Row>
-								<Col xs={2} md={2}>
-									<FormGroup>
-										<ControlLabel>Premium</ControlLabel>
-										<FormControl
-											id="premium"
-											type="checkbox"
-											checked={form.premium}
-											onChange={this.handlePropChange }/>
-									</FormGroup>
-								</Col>
-								<Col xs={2} md={2}>
-									<FormGroup>
-										<ControlLabel>Featured</ControlLabel>
-										<FormControl
-											id="featured"
-											type="checkbox"
-											checked={form.featured}
-											onChange={this.handlePropChange }/>
-									</FormGroup>
-								</Col>
-							</Row>
-							<Row>
-								<Col md={4}>
-									<div class="image-upload pack-thumbnail">
-										<Thumbnail src={form.image.small_url} onClick={this.onClickSelectImage} />
-									</div>
-								</Col>
-							</Row>
-							<Row>
-								<Col xs={4}>
+								<ButtonToolbar>
 									<ButtonGroup>
 										<Button onClick={this.handleUpdate}>{this.state.isNew ? 'Create' : 'Save'}</Button>
 										<Button {...form.published ? {bsStyle: 'primary'} :  {}} onClick={this.togglePublish}>{ form.published ? 'Unpublish' : 'Publish'}</Button>
 									</ButtonGroup>
-								</Col>
-								<Col xs={2}>
-									<div className="pull-right">
-										<Button onClick={this.onClickAddItem}><Glyphicon glyph="plus-sign" />Add Item</Button>
-									</div>
-								</Col>
-								<Col xs={2}>
-									<div className="pull-right">
-										{copyToProdButton}
-									</div>
-								</Col>
-								<Col xs={4}>
-									<div className="pull-right">
+									<ButtonGroup>
+										<Button onClick={this.onClickAddItem}><Glyphicon glyph="plus-sign" /> Add Item</Button>
+									</ButtonGroup>
+									<ButtonGroup>
+										<ConfirmationButton
+											onConfirmation={this.onClickUpdateProd}
+											confirmationText="Are you sure you want to upload this pack to production?"
+											bsStyle="default">
+											<Glyphicon glyph="upload"/> Upload
+										</ConfirmationButton>
+									</ButtonGroup>
+									<ButtonGroup>
 										<ConfirmationButton onConfirmation={this.onDelete} bsStyle="danger"> Delete </ConfirmationButton>
-									</div>
-								</Col>
+									</ButtonGroup>
+								</ButtonToolbar>
 							</Row>
 							<Row>
 								<div className="media-item-group">
@@ -422,7 +311,7 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 							</Row>
 						</Col>
 						<Col xs={6}>
-							{(this.state.shouldShowSearchPanel) ? <AddItemToPackModal show={this.state.shouldShowSearchPanel} packItems={this.state.model.get('items')} onUpdatePackItems={this.onUpdatePackItems} /> : ''}
+							{(this.state.shouldShowAddItemModal) ? <AddItemToPackModal show={this.state.shouldShowAddItemModal} packItems={this.state.model.get('items')} onUpdatePackItems={this.onUpdatePackItems} /> : ''}
 						</Col>
 						<Col xs={6}>
 							<ImageSelectionModal
