@@ -14,7 +14,9 @@ import Login from './Routes/Login';
 import Logout from './Routes/Logout';
 import Authenticator from './Models/Authenticator';
 
+const db = require('./db');
 const { render } = require('react-dom');
+
 
 function requireAuth(nextState, replace) {
 	if (!Authenticator.isAuthorized()) {

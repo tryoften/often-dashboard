@@ -1,6 +1,10 @@
 .section {
   position: relative;
 
+  .container {
+    margin-left: 10px;
+  }
+
   .section-header {
     padding: 35px 20px 20px;
     margin-bottom: 20px;
@@ -22,7 +26,35 @@
     margin: 0;
     padding: 0 10px 60px 0;
 
+    .pack-info {
+      text-align: center;
+      margin: 20px 0;
 
+      .pack-thumbnail {
+        margin: 10px auto;
+      }
+    }
+
+    .meta {
+      text-align: center;
+
+      .name {
+        font-family: 'Montserrat';
+        font-size: 18px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        font-weight: 300;
+      }
+
+      .description {
+        font-family: 'Open Sans';
+        font-size: 12px;
+        letter-spacing: 1px;
+        padding: 0 50px;
+        font-weight: 300;
+        line-height: 47px;
+      }
+    }
   }
 
   .footer {

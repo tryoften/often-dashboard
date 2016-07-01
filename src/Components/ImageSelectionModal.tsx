@@ -9,6 +9,7 @@ import { firebase as FirebaseConfig } from '../config';
 const FormGroup = require('react-bootstrap/lib/FormGroup');
 const FormControl = require('react-bootstrap/lib/FormControl');
 const ControlLabel = require('react-bootstrap/lib/ControlLabel');
+const firebase = require('firebase');
 
 interface ImageSelectionModalProps {
 	show: boolean;
@@ -63,7 +64,7 @@ export default class ImageSelectionModal extends React.Component<ImageSelectionM
 	componentDidMount() {
 		let state = {
 			images: new Images(),
-			imageQueueRef: new Firebase(`${FirebaseConfig.BaseURL}/queues/image_resizing/tasks`),
+			imageQueueRef: firebase.database().ref(`/queues/image_resizing/tasks`),
 			loading: true
 		};
 		state.images.fetch({

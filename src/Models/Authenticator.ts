@@ -1,6 +1,7 @@
-import * as Firebase from 'firebase';
 import { firebase as FirebaseConfig } from '../config';
 import { User, UserAttributes } from '@often/often-core';
+
+const firebase = require('firebase');
 
 interface AuthData {
 	token: string;
@@ -13,24 +14,27 @@ interface EmailPassword {
 }
 
 export default class Authenticator {
-
-	private static rootRef = new Firebase(FirebaseConfig.BaseURL);
+	user: any;
 
 	/**
 	 * Checks user authentication with a provider and updates local cache with auth data
 	 * @param {string} provider - Name of a provider (i.e. facebook, twitter, etc.)
 	 * @returns {Promise<TResult>} - Promise that resolves to nothing, when auth process completes
 	 */
-	public static authWithProvider(provider: string): Promise<void> {
-		let authPromise = new Promise((resolve, reject) => {
-			this.rootRef.authWithOAuthPopup(provider, (err, authData) => {
-				if (err) {
-					reject(err);
-				}
+	public static authWithProvider(providerId: string): Promise<void> {
 
-				if (authData) {
-					resolve(authData);
-				}
+		let provider;
+
+		if (providerId == 'facebook') {
+			provider = new firebase.auth.FacebookAuthProvider();
+		} else if (providerId == 'twitter') {
+			provider = new firebase.auth.TwitterAuthProvider();
+		}
+
+		let authPromise = new Promise((resolve, reject) => {
+			return firebase.auth().signInWithPopup(provider).then(authData => {
+				//this.user = authData.user;
+				resolve(authData);
 			});
 		});
 		return authPromise.then(() => { return this.getAndSetUserAuthData(); });
@@ -43,14 +47,9 @@ export default class Authenticator {
 	 */
 	public static authWithPassword(emailPassword: EmailPassword): Promise<void> {
 		let authPromise = new Promise((resolve, reject) => {
-			this.rootRef.authWithPassword(emailPassword, (err, authData) => {
-				if (err) {
-					reject(err);
-				}
-
-				if (authData) {
-					resolve(authData);
-				}
+			return firebase.auth().createUserWithEmailAndPassword(emailPassword.email, emailPassword.password).then((authData) => {
+				//this.user = authData.user;
+				resolve(authData);
 			});
 		});
 
@@ -72,9 +71,9 @@ export default class Authenticator {
 	 * Deauthenticates the user from firebase, and also clears local storage cache with user data.
 	 */
 	public static deauthorize() {
-		this.rootRef.unauth();
 		localStorage.removeItem('token');
 		localStorage.removeItem('userData');
+		return firebase.auth().signOut();
 	}
 
 	/**
@@ -90,7 +89,7 @@ export default class Authenticator {
 	 * @returns {Promise<AuthData>} - Returns authentication token and data pertaining to user.
 	 */
 	private static getUserAuthData(): Promise<AuthData> {
-		let user = this.rootRef.getAuth();
+		let user = {uid: '', token: ''};
 
 		let userObj = new User({id: user.uid});
 		return userObj.syncData().then((syncedModel) => {
