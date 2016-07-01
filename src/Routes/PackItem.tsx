@@ -26,6 +26,7 @@ interface PackItemState extends React.Props<PackItem> {
 	shouldShowAddItemModal?: boolean;
 	shouldShowImageSelectionPanel?: boolean;
 	shouldShowEditMediaItemModal?: boolean;
+	shouldShowEditPackModal?: boolean;
 	isNew?: boolean;
 	form?: PackAttributes;
 	categories?: Categories;
@@ -44,8 +45,8 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 			shouldShowAddItemModal: false,
 			shouldShowEditMediaItemModal: false,
 			shouldShowImageSelectionPanel: false,
+			shouldShowEditPackModal: false,
 			loading: true,
-			loadingProdPack: true,
 			isNew: isNew
 		};
 
@@ -63,6 +64,7 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		this.onCloseEditMediaItemModal = this.onCloseEditMediaItemModal.bind(this);
 		this.onCloseImageSelectionModal = this.onCloseImageSelectionModal.bind(this);
 		this.onClickUpdateProd = this.onClickUpdateProd.bind(this);
+		this.onClickEdit = this.onClickEdit.bind(this);
 	}
 
 	componentDidMount() {
@@ -126,6 +128,12 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		});
 	}
 
+	onClickEdit(e) {
+		this.setState({
+			shouldShowEditPackModal: true
+		});
+	}
+
 	onClickRemoveItem(item: IndexablePackItem) {
 		console.log(item);
 
@@ -142,7 +150,7 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		e.preventDefault();
 
 		this.setState({
-			shouldShowSearchPanel: true
+			shouldShowAddItemModal: true
 		});
 	}
 
@@ -163,7 +171,7 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		this.setState({
 			model: model,
 			form: model.toJSON(),
-			shouldShowSearchPanel: false
+			shouldShowAddItemModal: false
 		});
 	}
 
@@ -172,7 +180,7 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		form.published = !form.published;
 		form.publishedTime = new Date().toISOString();
 		this.setState({form});
-		this.handleUpdate(e);
+		//this.handleUpdate(e);
 	}
 
 	onDelete(e) {
@@ -183,7 +191,7 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 
 	getResizedImage(image: Image) {
 		let form = this.state.form;
-		form.imageId = image.id;
+		//form.imageId = image.id;
 		form.image = {
 			square_small_url: image.square_small_url,
 			square_url: image.square_url,
@@ -282,7 +290,7 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 							<Row>
 								<ButtonToolbar>
 									<ButtonGroup>
-										<Button onClick={this.handleUpdate}>{this.state.isNew ? 'Create' : 'Save'}</Button>
+										<Button onClick={this.onClickEdit}>Edit</Button>
 										<Button {...form.published ? {bsStyle: 'primary'} :  {}} onClick={this.togglePublish}>{ form.published ? 'Unpublish' : 'Publish'}</Button>
 									</ButtonGroup>
 									<ButtonGroup>
@@ -310,31 +318,42 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 								</div>
 							</Row>
 						</Col>
-						<Col xs={6}>
-							{(this.state.shouldShowAddItemModal) ? <AddItemToPackModal show={this.state.shouldShowAddItemModal} packItems={this.state.model.get('items')} onUpdatePackItems={this.onUpdatePackItems} /> : ''}
-						</Col>
-						<Col xs={6}>
-							<ImageSelectionModal
-								show={this.state.shouldShowImageSelectionPanel}
-								getResizedImage={this.getResizedImage}
-								onCloseImageSelectionModal={this.onCloseImageSelectionModal}
-							/>
-						</Col>
-						<Col xs={6}>
-							<EditMediaItemModal
-								show={this.state.shouldShowEditMediaItemModal}
-								item={this.state.selectedItem}
-								selectedItemPosition={this.getSelectedItemPosition()}
-								numItems={this.state.model.items.length}
-								removeItemFromPack={this.onClickRemoveItem}
-								categories={this.state.categories}
-								onSetItemCategory={this.onSetItemCategory}
-								onSetItemPosition={this.onSetItemPosition}
-								onCloseMediaItemModal={this.onCloseEditMediaItemModal}
-							/>
-						</Col>
 					</Row>
 				</Grid>
+
+
+				{ this.state.shouldShowAddItemModal ?
+					<AddItemToPackModal
+						show={this.state.shouldShowAddItemModal}
+						packItems={this.state.model.get('items')}
+						onUpdatePackItems={this.onUpdatePackItems}
+					/> : '' }
+
+				{ this.state.shouldShowImageSelectionPanel ?
+					<ImageSelectionModal
+						show={this.state.shouldShowImageSelectionPanel}
+						getResizedImage={this.getResizedImage}
+						onCloseImageSelectionModal={this.onCloseImageSelectionModal}
+					/> : '' }
+
+				{ this.state.shouldShowEditMediaItemModal ?
+					<EditMediaItemModal
+						show={this.state.shouldShowEditMediaItemModal}
+						item={this.state.selectedItem}
+						selectedItemPosition={this.getSelectedItemPosition()}
+						numItems={this.state.model.items.length}
+						removeItemFromPack={this.onClickRemoveItem}
+						categories={this.state.categories}
+						onSetItemCategory={this.onSetItemCategory}
+						onSetItemPosition={this.onSetItemPosition}
+						onCloseMediaItemModal={this.onCloseEditMediaItemModal}
+					/> : '' }
+
+				{ this.state.shouldShowEditPackModal ?
+					<PackEditModal
+						show={this.state.shouldShowEditPackModal}
+						pack={this.state.model}
+					/> : '' }
 
 			</div>
 		);

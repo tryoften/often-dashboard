@@ -8,7 +8,7 @@ interface SendNotificationModalProps extends React.Props<SendNotificationModal> 
 }
 
 interface SendNotificationModalState {
-
+    showModal: boolean;
 }
 
 export default class SendNotificationModal extends React.Component<SendNotificationModalProps, SendNotificationModalState> {

@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { Modal, Button, Alert, Grid, Row, Col, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
+import { IndexableObject, Image, Pack, PackAttributes } from '@often/often-core';
+import { Modal, Button, Alert, Grid, Row, Col } from 'react-bootstrap';
+const { FormGroup, FormControl, ControlLabel } = require('react-bootstrap');
+
+import ConfirmationButton from '../Components/ConfirmationButton';
 
 interface PackEditModalProps extends React.Props<PackEditModal> {
     show: boolean;
@@ -10,7 +14,7 @@ interface PackEditModalState extends React.Props<PackEditModal> {
     model?: Pack;
     isNew?: boolean;
     form?: PackAttributes;
-    selectedItem?: IndexableObject;
+    showModal?: boolean;
 }
 
 export default class PackEditModal extends React.Component<PackEditModalProps, PackEditModalState> {
@@ -18,8 +22,18 @@ export default class PackEditModal extends React.Component<PackEditModalProps, P
     constructor(props: PackEditModalProps) {
         super(props);
 
+        this.state = {
+            isNew: false,
+            showModal: props.show,
+            model: props.pack,
+            form: props.pack.toJSON()
+        };
+
         this.handlePropChange = this.handlePropChange.bind(this);
         this.handleUpdate = this.handleUpdate.bind(this);
+        this.close = this.close.bind(this);
+        this.onClickDelete = this.onClickDelete.bind(this);
+        this.onClickSave = this.onClickSave.bind(this);
     }
 
     close() {
@@ -63,12 +77,22 @@ export default class PackEditModal extends React.Component<PackEditModalProps, P
 
     }
 
+    onClickDelete(e) {
+        e.preventDefault();
+    }
+
+    onClickSave(e) {
+
+    }
+
     render() {
+        let form = this.state.form;
+
         return (
-            <Modal show={this.state.showModal} onHide={this.cancel}>
-                <Model.Header>
+            <Modal show={this.state.showModal} onHide={this.close}>
+                <Modal.Header>
                     <h2>Update Pack</h2>
-                </Model.Header>
+                </Modal.Header>
                 <Modal.Body>
                     <Row>
                         <Col xs={12} md={8}>
@@ -109,26 +133,26 @@ export default class PackEditModal extends React.Component<PackEditModalProps, P
                                     id="featured"
                                     type="checkbox"
                                     checked={form.featured}
-                                    onChange={this.handlePropChange }/>
+                                    onChange={this.handlePropChange}/>
                             </FormGroup>
                         </Col>
                     </Row>
                 </Modal.Body>
-                <Model.Footer>
+                <Modal.Footer>
                     <Grid fluid>
                         <Row>
                             <Col md={1}>
-                                <Button onClick={this.cancel}>Cancel</Button>
+                                <Button onClick={this.close}>Cancel</Button>
                             </Col>
                             <Col md={1} mdOffset={7}>
-                                <ConfirmationButton bsStyle="default" onConfirmation={this.onClickRemove}> Remove </ConfirmationButton>
+                                <ConfirmationButton bsStyle="default" onConfirmation={this.onClickDelete}>Delete</ConfirmationButton>
                             </Col>
                             <Col md={1} mdOffset={1} className="column-right-tilt">
-                                <Button className="save-button" onClick={this.save}>Save</Button>
+                                <Button className="save-button" onClick={this.onClickSave}>Save</Button>
                             </Col>
                         </Row>
                     </Grid>
-                </Model.Footer>
+                </Modal.Footer>
             </Modal>
         );
     }

@@ -13,8 +13,8 @@ import Featured from './Routes/FeaturedRoute';
 import Login from './Routes/Login';
 import Logout from './Routes/Logout';
 import Authenticator from './Models/Authenticator';
-import db from './db';
 
+const db = require('./db');
 const { render } = require('react-dom');
 
 
