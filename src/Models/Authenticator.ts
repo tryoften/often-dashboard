@@ -33,11 +33,12 @@ export default class Authenticator {
 
 		let authPromise = new Promise((resolve, reject) => {
 			return firebase.auth().signInWithPopup(provider).then(authData => {
-				//this.user = authData.user;
+				// this.user = authData.user;
+				console.log(authData);
 				resolve(authData);
 			});
 		});
-		return authPromise.then(() => { return this.getAndSetUserAuthData(); });
+		return authPromise.then((authData) => { return this.getAndSetUserAuthData(authData); });
 	}
 
 	/**
@@ -48,12 +49,12 @@ export default class Authenticator {
 	public static authWithPassword(emailPassword: EmailPassword): Promise<void> {
 		let authPromise = new Promise((resolve, reject) => {
 			return firebase.auth().createUserWithEmailAndPassword(emailPassword.email, emailPassword.password).then((authData) => {
-				//this.user = authData.user;
+				// this.user = authData.user;
 				resolve(authData);
 			});
 		});
 
-		return authPromise.then(() => { return this.getAndSetUserAuthData(); });
+		return authPromise.then((authData) => { return this.getAndSetUserAuthData(authData); });
 	}
 
 
@@ -88,8 +89,8 @@ export default class Authenticator {
 	 * Retrieves user authentication data from firebase, checks for administration privileges and returns token and user data
 	 * @returns {Promise<AuthData>} - Returns authentication token and data pertaining to user.
 	 */
-	private static getUserAuthData(): Promise<AuthData> {
-		let user = {uid: '', token: ''};
+	private static getUserAuthData(userData: any): Promise<AuthData> {
+		let user = userData.user;
 
 		let userObj = new User({id: user.uid});
 		return userObj.syncData().then((syncedModel) => {
@@ -98,12 +99,12 @@ export default class Authenticator {
 				throw new Error('User is not an admin');
 			}
 
-			if (!user.token) {
+			if (!user.refreshToken) {
 				throw new Error('Could not retrieve user token');
 			}
 
 			return {
-				token: user.token,
+				token: user.refreshToken,
 				userData: userObj.toJSON()
 			};
 
@@ -124,8 +125,8 @@ export default class Authenticator {
 	 * Helper method for chaining retrieval and setting of authentication data
 	 * @returns {Promise<void>} - Returns a promise that resolves to void.
 	 */
-	private static getAndSetUserAuthData(): Promise<void> {
-		return this.getUserAuthData()
+	private static getAndSetUserAuthData(authData): Promise<void> {
+		return this.getUserAuthData(authData)
 			.then((userAuthData: AuthData) => {
 				return this.setUserAuthData(userAuthData);
 			});
