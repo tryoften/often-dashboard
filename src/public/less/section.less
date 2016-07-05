@@ -32,6 +32,11 @@
 
       .pack-thumbnail {
         margin: 10px auto;
+
+        .thumbnail {
+          height: inherit;
+          width: inherit;
+        }
       }
     }
 
@@ -113,6 +118,21 @@
 }
 
 .pack-thumbnail {
-  width: 300px;
-  height: 300px;
+  width: 250px;
+  height: 250px;
+
+  img {
+    width: inherit;
+    height: inherit;
+  }
+}
+
+.modal .modal-body {
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.dropdown-menu {
+  max-height: 300px;
+  overflow-y: auto;
 }

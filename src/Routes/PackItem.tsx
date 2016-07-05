@@ -4,6 +4,7 @@ import * as objectPath from 'object-path';
 import * as _ from 'underscore';
 import { Categories, Category, IndexableObject, Image, Pack, PackAttributes, IndexablePackItem } from '@often/often-core';
 import { Grid, Row, Col, Thumbnail, Glyphicon, ButtonToolbar, ButtonGroup, Button } from 'react-bootstrap';
+import { Link } from 'react-router';
 import { firebase as FirebaseConfig } from '../config';
 import { production as prodApp } from '../db';
 
@@ -52,7 +53,6 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 
 		this.updateStateWithPack = this.updateStateWithPack.bind(this);
 		this.onClickAddItem = this.onClickAddItem.bind(this);
-		this.togglePublish = this.togglePublish.bind(this);
 		this.onDelete = this.onDelete.bind(this);
 		this.onUpdatePackItems = this.onUpdatePackItems.bind(this);
 		this.updateStateWithCategories = this.updateStateWithCategories.bind(this);
@@ -63,8 +63,10 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		this.onSetItemPosition = this.onSetItemPosition.bind(this);
 		this.onCloseEditMediaItemModal = this.onCloseEditMediaItemModal.bind(this);
 		this.onCloseImageSelectionModal = this.onCloseImageSelectionModal.bind(this);
+		this.onClosePackEditModal = this.onClosePackEditModal.bind(this);
 		this.onClickUpdateProd = this.onClickUpdateProd.bind(this);
 		this.onClickEdit = this.onClickEdit.bind(this);
+		this.onSavePackEditModal = this.onSavePackEditModal.bind(this);
 	}
 
 	componentDidMount() {
@@ -175,13 +177,6 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		});
 	}
 
-	togglePublish(e) {
-		let form = this.state.form;
-		form.published = !form.published;
-		form.publishedTime = new Date().toISOString();
-		this.setState({form});
-		//this.handleUpdate(e);
-	}
 
 	onDelete(e) {
 		this.state.model.save({
@@ -215,6 +210,22 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 	onCloseImageSelectionModal() {
 		this.setState({
 			shouldShowImageSelectionPanel: false
+		});
+	}
+
+	onClosePackEditModal() {
+		this.setState({
+			shouldShowEditPackModal: false
+		})
+	}
+
+	onSavePackEditModal() {
+		let model = this.state.model;
+
+		this.setState({
+			model: model,
+			form: model.toJSON(),
+			shouldShowEditPackModal: false
 		});
 	}
 
@@ -272,12 +283,28 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		return (
 			<div className={classes}>
 				<header className="section-header">
-					<h2>{this.state.model.name}</h2>
+					<Link to="/packs">
+						<h2><Glyphicon glyph="menu-left" /> Packs</h2>
+					</Link>
+
+					<ButtonToolbar className="pull-right">
+						<ButtonGroup>
+							<Button onClick={this.onClickAddItem}><Glyphicon glyph="plus-sign" /> Add Item</Button>
+							<ConfirmationButton
+								onConfirmation={this.onClickUpdateProd}
+								confirmationText="Are you sure you want to publish/update this pack?"
+								bsStyle="default">
+								<Glyphicon glyph="upload"/> Publish
+							</ConfirmationButton>
+						</ButtonGroup>
+
+						<Button onClick={this.onClickEdit}>Edit</Button>
+					</ButtonToolbar>
 				</header>
 
 				<Grid fluid={false}>
 					<Row>
-						<Col xs={12} md={8}>
+						<Col xs={12} md={10}>
 							<Row className="pack-info">
 								<div className="image-upload pack-thumbnail">
 									<Thumbnail src={form.image.small_url} onClick={this.onClickSelectImage} />
@@ -286,28 +313,6 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 									<div className="name">{form.name}</div>
 									<div className="description">{form.description}</div>
 								</div>
-							</Row>
-							<Row>
-								<ButtonToolbar>
-									<ButtonGroup>
-										<Button onClick={this.onClickEdit}>Edit</Button>
-										<Button {...form.published ? {bsStyle: 'primary'} :  {}} onClick={this.togglePublish}>{ form.published ? 'Unpublish' : 'Publish'}</Button>
-									</ButtonGroup>
-									<ButtonGroup>
-										<Button onClick={this.onClickAddItem}><Glyphicon glyph="plus-sign" /> Add Item</Button>
-									</ButtonGroup>
-									<ButtonGroup>
-										<ConfirmationButton
-											onConfirmation={this.onClickUpdateProd}
-											confirmationText="Are you sure you want to upload this pack to production?"
-											bsStyle="default">
-											<Glyphicon glyph="upload"/> Upload
-										</ConfirmationButton>
-									</ButtonGroup>
-									<ButtonGroup>
-										<ConfirmationButton onConfirmation={this.onDelete} bsStyle="danger"> Delete </ConfirmationButton>
-									</ButtonGroup>
-								</ButtonToolbar>
 							</Row>
 							<Row>
 								<div className="media-item-group">
@@ -353,6 +358,8 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 					<PackEditModal
 						show={this.state.shouldShowEditPackModal}
 						pack={this.state.model}
+						onClose={this.onClosePackEditModal}
+						onSave={this.onSavePackEditModal}
 					/> : '' }
 
 			</div>

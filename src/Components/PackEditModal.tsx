@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as objectPath from 'object-path';
 import { IndexableObject, Image, Pack, PackAttributes } from '@often/often-core';
 import { Modal, Button, Alert, Grid, Row, Col } from 'react-bootstrap';
 const { FormGroup, FormControl, ControlLabel } = require('react-bootstrap');
@@ -8,6 +9,8 @@ import ConfirmationButton from '../Components/ConfirmationButton';
 interface PackEditModalProps extends React.Props<PackEditModal> {
     show: boolean;
     pack: Pack;
+    onClose: () => void;
+    onSave: () => void;
 }
 
 interface PackEditModalState extends React.Props<PackEditModal> {
@@ -33,11 +36,21 @@ export default class PackEditModal extends React.Component<PackEditModalProps, P
         this.handleUpdate = this.handleUpdate.bind(this);
         this.close = this.close.bind(this);
         this.onClickDelete = this.onClickDelete.bind(this);
-        this.onClickSave = this.onClickSave.bind(this);
+        this.togglePublish = this.togglePublish.bind(this);
     }
 
     close() {
+        this.props.onClose();
         this.setState({showModal: false});
+    }
+
+
+    togglePublish(e) {
+        let form = this.state.form;
+        form.published = !form.published;
+        form.publishedTime = new Date().toISOString();
+        this.setState({form});
+        this.handleUpdate(e);
     }
 
     handlePropChange(e: any) {
@@ -74,15 +87,11 @@ export default class PackEditModal extends React.Component<PackEditModalProps, P
             model.updateFeatured();
         }
         this.setState({model: model, isNew: false, form: model.toJSON()});
-
+        this.props.onSave();
     }
 
     onClickDelete(e) {
         e.preventDefault();
-    }
-
-    onClickSave(e) {
-
     }
 
     render() {
@@ -117,10 +126,10 @@ export default class PackEditModal extends React.Component<PackEditModalProps, P
                             <FormGroup>
                                 <ControlLabel>Background Color</ControlLabel>
                                 <FormControl
-                                    id="description"
+                                    id="backgroundColor"
                                     type="text"
-                                    placeholder="Select background color"
-                                    value={form.description}
+                                    placeholder="#000000"
+                                    value={form.backgroundColor}
                                     onChange={this.handlePropChange}/>
                             </FormGroup>
                         </Col>
@@ -144,11 +153,12 @@ export default class PackEditModal extends React.Component<PackEditModalProps, P
                             <Col md={1}>
                                 <Button onClick={this.close}>Cancel</Button>
                             </Col>
-                            <Col md={1} mdOffset={7}>
-                                <ConfirmationButton bsStyle="default" onConfirmation={this.onClickDelete}>Delete</ConfirmationButton>
+                            <Col md={2} mdOffset={1} className="column-right-tilt">
+                                <Button className="save-button" onClick={this.handleUpdate}>Save</Button>
+                                <Button {...form.published ? {bsStyle: 'primary'} :  {}} onClick={this.togglePublish}>{ form.published ? 'Unpublish' : 'Publish'}</Button>
                             </Col>
-                            <Col md={1} mdOffset={1} className="column-right-tilt">
-                                <Button className="save-button" onClick={this.onClickSave}>Save</Button>
+                            <Col md={1} mdOffset={7}>
+                                <ConfirmationButton bsStyle="danger" onConfirmation={this.onClickDelete}>Delete</ConfirmationButton>
                             </Col>
                         </Row>
                     </Grid>

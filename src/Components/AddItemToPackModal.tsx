@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'underscore';
-import { Modal, Tabs, Tab, Button, DropdownButton, MenuItem } from 'react-bootstrap';
+import { Modal, Tabs, Tab, ButtonGroup, Button, DropdownButton, MenuItem } from 'react-bootstrap';
 import { Owners, Owner, MediaItemType } from '@often/often-core';
 import MediaItemView from '../Components/MediaItemView';
 import { IndexablePackItem } from '@often/often-core/src/often-core/Models/Pack';
@@ -39,10 +39,6 @@ export default class AddItemToPackModal extends React.Component<AddItemToPackMod
 		this.onSaveChanges = this.onSaveChanges.bind(this);
 		this.onSelectItem = this.onSelectItem.bind(this);
 		this.owners.on('update', this.updateStateWithModel);
-	}
-
-	shouldComponentUpdate(nextProps, nextState) {
-		return shallowCompare(this, nextProps, nextState);
 	}
 
 	updateStateWithModel(owners: Owners) {
@@ -103,27 +99,33 @@ export default class AddItemToPackModal extends React.Component<AddItemToPackMod
 	}
 
 	render() {
-		let ownersSelector = this.owners.models.map(model => {
+		let ownersSelector = this.owners.sortBy('name').map(model => {
 			return <MenuItem key={model.id} value={model.id}>{model.get('name')}</MenuItem>;
 		});
 
 		let ownerQuotes = this.state.selectedOwner ? Object.keys(this.state.selectedOwner.get('quotes') || []).map(key => {
 			let quote = this.state.selectedOwner.get('quotes')[key];
 			let foundQuote = _.findWhere(this.state.selectedItems, {
-				id: quote.id,
-				type: MediaItemType.quote
+				id: quote.id
 			});
-			return (<MediaItemView key={key} item={quote} onSelect={this.onSelectItem.bind(this)} selected={!!foundQuote} />);
+			return (<MediaItemView
+				key={key}
+				item={quote}
+				onSelect={this.onSelectItem.bind(this)}
+				selected={!!foundQuote} />);
 
 		}) : "";
 
 		let gifs =  this.state.selectedOwner ? Object.keys(this.state.selectedOwner.get('gifs') || []).map(key => {
 			let item = this.state.selectedOwner.get('gifs')[key];
 			let foundGif = _.findWhere(this.state.selectedItems, {
-				id: item.id,
-				type: MediaItemType.gif
+				id: item.id
 			});
-			return (<MediaItemView key={key} item={item} onSelect={this.onSelectItem.bind(this)} selected={!!foundGif} />);
+			return (<MediaItemView
+				key={key}
+				item={item}
+				onSelect={this.onSelectItem.bind(this)}
+				selected={!!foundGif} />);
 
 		}) : "";
 
@@ -131,24 +133,24 @@ export default class AddItemToPackModal extends React.Component<AddItemToPackMod
 
 		return (
 			<Modal show={this.state.showModal} onHide={this.close.bind(this)} bsSize="large">
+				<Modal.Header>
+					<ButtonGroup>
+						<DropdownButton
+							id="owner-dropdown"
+							title={ownerName}
+							label="Select Owner"
+							onSelect={this.onSelectOwnerChange}>
+							{ownersSelector}
+						</DropdownButton>
+					</ButtonGroup>
+				</Modal.Header>
 				<Modal.Body>
-					<Tabs id="uncontrolled-modal-tab">
-						<Tab eventKey={0} title="Add New Quote">
-							<div className="container-fluid">
-								<DropdownButton
-									id="owner-dropdown"
-									title={ownerName}
-									label="Select Owner"
-									onSelect={this.onSelectOwnerChange}>
-									{ownersSelector}
-								</DropdownButton>
-								<div className="media-item-group">
-									<div className="items">{gifs}</div>
-									<div className="items">{ownerQuotes}</div>
-								</div>
-							</div>
-						</Tab>
-					</Tabs>
+					<div className="container-fluid add-items">
+						<div className="media-item-group">
+							<div className="items">{gifs}</div>
+							<div className="items">{ownerQuotes}</div>
+						</div>
+					</div>
 				</Modal.Body>
 				<Modal.Footer>
 					<Button onClick={this.close.bind(this)}>Close</Button>
