@@ -3,7 +3,7 @@ import * as classNames from 'classnames';
 import { IndexableObject, TrackIndexableObject, ArtistIndexableObject, MediaItemType, GIFAttributes } from '@often/often-core';
 import ImageBrandMask from '../Components/ImageBrandMask';
 
-interface SearchResultItemViewProps {
+interface SearchResultItemViewProps extends React.Props<MediaItemView> {
 	item: IndexableObject;
 	selected?: boolean;
 	onSelect?: (item: IndexableObject) => void;
@@ -51,7 +51,7 @@ export default class MediaItemView extends React.Component<SearchResultItemViewP
 				let artistItem = this.props.item as ArtistIndexableObject;
 
 				return (
-					<div className="artist media-item" id={artistItem._id} onClick={this.onSelect.bind(this)}>
+					<div className={classes} id={artistItem._id} onClick={this.onSelect.bind(this)}>
 						<div className="image-container" style={{backgroundImage: `url(${artistItem.image_url})`}}>
 							<ImageBrandMask />
 						</div>
@@ -66,7 +66,7 @@ export default class MediaItemView extends React.Component<SearchResultItemViewP
 				let gif = this.props.item as GIFAttributes;
 
 				return (
-					<div className="gif media-item pull-left" onClick={this.onSelect.bind(this)}>
+					<div className={classes} onClick={this.onSelect.bind(this)}>
 						<img src={gif.image.medium_url} />
 					</div>
 				);
