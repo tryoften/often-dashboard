@@ -2,16 +2,14 @@ import * as React from 'react';
 import * as _ from 'underscore';
 import * as Firebase from 'firebase';
 import { isURL } from 'validator';
-import { Modal, Tabs, Tab, Button, Thumbnail, Alert} from 'react-bootstrap';
+import { Modal, Tabs, Button, Thumbnail, Alert, Nav, NavItem } from 'react-bootstrap';
 import { Images, Image } from '@often/often-core';
 import { firebase as FirebaseConfig } from '../config';
 
-const FormGroup = require('react-bootstrap/lib/FormGroup');
-const FormControl = require('react-bootstrap/lib/FormControl');
-const ControlLabel = require('react-bootstrap/lib/ControlLabel');
+const { Tab, FormGroup, FormControl, ControlLabel } = require('react-bootstrap');
 const firebase = require('firebase');
 
-interface ImageSelectionModalProps {
+interface ImageSelectionModalProps extends React.Props<ImageSelectionModal> {
 	show: boolean;
 	getResizedImage?: (image: Image) => void;
 	onCloseImageSelectionModal?: () => void;
@@ -41,6 +39,7 @@ export default class ImageSelectionModal extends React.Component<ImageSelectionM
 			successMessage: '',
 			loadingImage: false
 		};
+
 		this.close = this.close.bind(this);
 		this.updateStateWithImages = this.updateStateWithImages.bind(this);
 		this.checkURLAndSetPreview = this.checkURLAndSetPreview.bind(this);
@@ -165,6 +164,9 @@ export default class ImageSelectionModal extends React.Component<ImageSelectionM
 		});
 	}
 
+	onTabSelected(e) {
+		console.log(e);
+	}
 
 	render() {
 
@@ -201,45 +203,45 @@ export default class ImageSelectionModal extends React.Component<ImageSelectionM
 			}
 		};
 
-		let tabulatedResults = (<Tabs
-				id = "uncontrolled-modal-tab" >
-				<Tab
-					eventKey={0}
-					title="Select Image"
-					onEnter={this.onEnterViewImagesTab}>
-					<div className="container-fluid">
-						<div className="image-group">
-							{images}
-						</div>
-					</div>
-				</Tab>
-				<Tab
-					eventKey={1}
-					title="New Image" >
-					<FormGroup>
-						<ControlLabel>Url</ControlLabel>
-						<FormControl
-							id="Url"
-							type="text"
-							placeholder="Paste in a URL with desired image.."
-							value={this.state.image_url}
-							onChange={this.checkURLAndSetPreview }/>
-					</FormGroup>
-					{displayPreview()}
-					{displayMessages()}
-				</Tab >
-			</Tabs>);
-
 		return (
-			<Modal show={this.state.showModal} onHide={this.close} bsSize="large">
-				<Modal.Body>
-					{tabulatedResults}
-				</Modal.Body>
-				<Modal.Footer>
-					{displayUploadButton()}
-					<Button onClick={this.close}>Close</Button>
-				</Modal.Footer>
-			</Modal>
+			<Tab.Container id="image-selector" defaultActiveKey="one" onSelect={this.onTabSelected.bind(this)}>
+				<Modal show={this.state.showModal} onHide={this.close} bsSize="large">
+					<Modal.Header>
+						<Nav bsStyle="pills">
+							<NavItem eventKey="one">Select Image</NavItem>
+							<NavItem eventKey="two">New Image</NavItem>
+						</Nav>
+					</Modal.Header>
+					<Modal.Body>
+						<Tab.Content>
+							<Tab.Pane eventKey="one">
+								<div className="container-fluid">
+									<div className="image-group">
+										{images}
+									</div>
+								</div>
+							</Tab.Pane>
+							<Tab.Pane eventKey="two">
+								<FormGroup>
+									<ControlLabel>URL</ControlLabel>
+									<FormControl
+										id="Url"
+										type="text"
+										placeholder="Paste in a URL with desired image.."
+										value={this.state.image_url}
+										onChange={this.checkURLAndSetPreview} />
+								</FormGroup>
+								{displayPreview()}
+								{displayMessages()}
+							</Tab.Pane>
+						</Tab.Content>
+					</Modal.Body>
+					<Modal.Footer>
+						{displayUploadButton()}
+						<Button onClick={this.close}>Close</Button>
+					</Modal.Footer>
+				</Modal>
+			</Tab.Container>
 		);
 	}
 }

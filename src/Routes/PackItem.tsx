@@ -57,7 +57,7 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		this.onUpdatePackItems = this.onUpdatePackItems.bind(this);
 		this.updateStateWithCategories = this.updateStateWithCategories.bind(this);
 		this.onClickRemoveItem = this.onClickRemoveItem.bind(this);
-		this.getResizedImage = this.getResizedImage.bind(this);
+		this.onImageSelected = this.onImageSelected.bind(this);
 		this.onClickSelectImage = this.onClickSelectImage.bind(this);
 		this.onSetItemCategory = this.onSetItemCategory.bind(this);
 		this.onSetItemPosition = this.onSetItemPosition.bind(this);
@@ -132,7 +132,10 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 
 	onClickEdit(e) {
 		this.setState({
-			shouldShowEditPackModal: true
+			shouldShowEditPackModal: true,
+			shouldShowEditMediaItemModal: false,
+			shouldShowImageSelectionPanel: false,
+			shouldShowAddItemModal: false
 		});
 	}
 
@@ -184,9 +187,10 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		});
 	}
 
-	getResizedImage(image: Image) {
+	onImageSelected(image: Image) {
 		let form = this.state.form;
-		//form.imageId = image.id;
+		form.imageId = image.id;
+
 		form.image = {
 			square_small_url: image.square_small_url,
 			square_url: image.square_url,
@@ -195,10 +199,13 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 			original_url: image.original_url,
 			large_url: image.large_url
 		};
+
 		this.setState({
 			form: form,
 			shouldShowImageSelectionPanel: false
 		});
+
+		this.state.model.save(form);
 	}
 
 	onCloseEditMediaItemModal() {
@@ -315,6 +322,9 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 								</div>
 							</Row>
 							<Row>
+
+							</Row>
+							<Row>
 								<div className="media-item-group">
 									<h3>Items</h3>
 									<div className="items">
@@ -334,12 +344,12 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 						onUpdatePackItems={this.onUpdatePackItems}
 					/> : '' }
 
-				{ this.state.shouldShowImageSelectionPanel ?
-					<ImageSelectionModal
-						show={this.state.shouldShowImageSelectionPanel}
-						getResizedImage={this.getResizedImage}
-						onCloseImageSelectionModal={this.onCloseImageSelectionModal}
-					/> : '' }
+
+				<ImageSelectionModal
+					show={this.state.shouldShowImageSelectionPanel}
+					getResizedImage={this.onImageSelected}
+					onCloseImageSelectionModal={this.onCloseImageSelectionModal}
+				/>
 
 				{ this.state.shouldShowEditMediaItemModal ?
 					<EditMediaItemModal

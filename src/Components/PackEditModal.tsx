@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as objectPath from 'object-path';
 import { IndexableObject, Image, Pack, PackAttributes } from '@often/often-core';
-import { Modal, Button, Alert, Grid, Row, Col } from 'react-bootstrap';
+import { Modal, Button, ButtonToolbar, Alert, Grid, Row, Col } from 'react-bootstrap';
 const { FormGroup, FormControl, ControlLabel } = require('react-bootstrap');
 
 import ConfirmationButton from '../Components/ConfirmationButton';
@@ -148,20 +148,12 @@ export default class PackEditModal extends React.Component<PackEditModalProps, P
                     </Row>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Grid fluid>
-                        <Row>
-                            <Col md={1}>
-                                <Button onClick={this.close}>Cancel</Button>
-                            </Col>
-                            <Col md={2} mdOffset={1} className="column-right-tilt">
-                                <Button className="save-button" onClick={this.handleUpdate}>Save</Button>
-                                <Button {...form.published ? {bsStyle: 'primary'} :  {}} onClick={this.togglePublish}>{ form.published ? 'Unpublish' : 'Publish'}</Button>
-                            </Col>
-                            <Col md={1} mdOffset={7}>
-                                <ConfirmationButton bsStyle="danger" onConfirmation={this.onClickDelete}>Delete</ConfirmationButton>
-                            </Col>
-                        </Row>
-                    </Grid>
+                    <ButtonToolbar>
+                        <Button onClick={this.close}>Cancel</Button>
+                        <Button className="save-button" onClick={this.handleUpdate}>Save</Button>
+                        <Button {...form.published ? {bsStyle: 'primary'} :  {}} onClick={this.togglePublish}>{ form.published ? 'Unpublish' : 'Publish'}</Button>
+                        <ConfirmationButton bsStyle="danger" onConfirmation={this.onClickDelete}>Delete</ConfirmationButton>
+                    </ButtonToolbar>
                 </Modal.Footer>
             </Modal>
         );
