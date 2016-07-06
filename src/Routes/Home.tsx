@@ -7,10 +7,10 @@ interface HomeProps extends ReactRouter.RouteComponentProps<Home, {}> {
 	location?: any;
 }
 
-export default class Home extends React.Component<HomeProps, {}> {
+export default class Home extends React.Component<HomeProps, {}> {\
 	render() {
 		return (
-			<div id='container'>
+			<div className="app container">
 				<Sidebar />
 				<div id='body'>
 					<ReactCSSTransitionGroup
