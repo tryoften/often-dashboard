@@ -2,8 +2,10 @@ import * as React from 'react';
 import { Row, Col, Grid, ButtonToolbar, Button } from 'react-bootstrap';
 import { Link } from 'react-router';
 import PackView from '../Components/PackView';
-import { Packs } from '@often/often-core';
+import { Packs, Sections } from '@often/often-core';
 import * as ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+
+const firebase = require('firebase');
 
 interface PacksProps extends React.Props<PacksRoute> {
 	open?: boolean;
@@ -11,6 +13,7 @@ interface PacksProps extends React.Props<PacksRoute> {
 
 interface PacksState extends React.Props<PacksRoute> {
 	packs?: Packs;
+	sections?: Sections;
 	loading?: boolean;
 }
 
@@ -22,6 +25,7 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 			loading: true
 		};
 		this.updateCollection = this.updateCollection.bind(this);
+		this.onClickUpdateBrowse = this.onClickUpdateBrowse.bind(this);
 	}
 
 	updateCollection(collection: Packs) {
@@ -29,6 +33,19 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 			packs: collection,
 			loading: false
 		});
+	}
+
+	updateBrowseSections() {
+		new Sections().fetch({
+			success: (sections) => {
+				var sectionAttributes = sections.toJSON();
+				console.log(sectionAttributes);
+				var sectionResult = this.state.packs.generateBrowseSections(sectionAttributes);
+
+				let sectionRef = firebase.database().ref(`/browse`);
+				sectionRef.set(sectionResult);
+			}
+		})
 	}
 
 	componentDidMount() {
@@ -45,6 +62,11 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 
 	componentWillUnmount() {
 		this.state.packs.off('sync', this.updateCollection);
+	}
+
+	onClickUpdateBrowse(e) {
+		e.preventDefault();
+		this.updateBrowseSections();
 	}
 
 	render() {
@@ -67,6 +89,7 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 				<header className="section-header">
 					<h2>Packs</h2>
 					<ButtonToolbar className="pull-right">
+						<Button onClick={this.onClickUpdateBrowse}>Update Browse</Button>
 						<Link to="/pack">
 							<Button bsStyle="primary" bsSize="small" active>Add Pack</Button>
 						</Link>
