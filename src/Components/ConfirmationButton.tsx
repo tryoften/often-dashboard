@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, ButtonProps } from 'react-bootstrap';
 
-interface ConfirmationButtonProps extends React.Props<ConfirmationButton> {
+interface ConfirmationButtonProps extends ButtonProps {
 	showConfirmMessage?: boolean;
 	confirmationText?: string;
 	onConfirmation?: (boolean) => void;
