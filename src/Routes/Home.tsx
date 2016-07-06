@@ -7,7 +7,7 @@ interface HomeProps extends ReactRouter.RouteComponentProps<Home, {}> {
 	location?: any;
 }
 
-export default class Home extends React.Component<HomeProps, {}> {\
+export default class Home extends React.Component<HomeProps, {}> {
 	render() {
 		return (
 			<div className="app container">
