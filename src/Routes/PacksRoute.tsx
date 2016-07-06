@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 import PackView from '../Components/PackView';
 import { Packs, Sections } from '@often/often-core';
 import * as ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import ConfirmationButton from '../Components/ConfirmationButton';
 
 const firebase = require('firebase');
 
@@ -89,7 +90,11 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 				<header className="section-header">
 					<h2>Packs</h2>
 					<ButtonToolbar className="pull-right">
-						<Button onClick={this.onClickUpdateBrowse}>Update Browse</Button>
+						<ConfirmationButton confirmationText="Are you sure you want to update browse on production?"
+											onClick={this.onClickUpdateBrowse}>
+							Update Browse
+						</ConfirmationButton>
+
 						<Link to="/pack">
 							<Button bsStyle="primary" bsSize="small" active>Add Pack</Button>
 						</Link>
