@@ -100,22 +100,16 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 						</Link>
 					</ButtonToolbar>
 				</header>
-				<Grid fluid={true}>
-					<Row>
-						<Col sm={12}>
-							<div className="content">
-								<ReactCSSTransitionGroup
-									transitionName="pack"
-									transitionEnterTimeout={300}
-									transitionLeaveTimeout={300}>
-									{packComponents}
-								</ReactCSSTransitionGroup>
-							</div>
-						</Col>
-					</Row>
-				</Grid>
-			</div>
 
+				<div className="content">
+					<ReactCSSTransitionGroup
+						transitionName="pack"
+						transitionEnterTimeout={300}
+						transitionLeaveTimeout={300}>
+						{packComponents}
+					</ReactCSSTransitionGroup>
+				</div>
+			</div>
 		);
 
 		return content;

@@ -148,20 +148,10 @@ export default class PackEditModal extends React.Component<PackEditModalProps, P
                     </Row>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Grid fluid>
-                        <Row>
-                            <Col md={1}>
-                                <Button onClick={this.close}>Cancel</Button>
-                            </Col>
-                            <Col md={2} mdOffset={1} className="column-right-tilt">
-                                <Button className="save-button" onClick={this.handleUpdate}>Save</Button>
-                                <Button {...form.published ? {bsStyle: 'primary'} :  {}} onClick={this.togglePublish}>{ form.published ? 'Unpublish' : 'Publish'}</Button>
-                            </Col>
-                            <Col md={1} mdOffset={7}>
-                                <ConfirmationButton bsStyle="danger" onConfirmation={this.onClickDelete}>Delete</ConfirmationButton>
-                            </Col>
-                        </Row>
-                    </Grid>
+                    <Button onClick={this.close}>Cancel</Button>
+                    <Button className="save-button" onClick={this.handleUpdate}>Save</Button>
+                    <Button {...form.published ? {bsStyle: 'primary'} :  {}} onClick={this.togglePublish}>{ form.published ? 'Unpublish' : 'Publish'}</Button>
+                    <ConfirmationButton bsStyle="danger" onConfirmation={this.onClickDelete}>Delete</ConfirmationButton>
                 </Modal.Footer>
             </Modal>
         );
