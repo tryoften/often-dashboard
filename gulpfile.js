@@ -20,9 +20,9 @@ gulp.task('copy', ['clean'], function () {
 });
 
 gulp.task('less', ['clean', 'copy'], function () {
-    return gulp.src('./src/less/style.less')
+    return gulp.src('src/public/less/style.less')
         .pipe(less())
-        .pipe(gulp.dest('./dist/public/css'));
+        .pipe(gulp.dest('dist/public/css'));
 });
 
 gulp.task('build-server', ['clean', 'copy', 'less'], function () {
