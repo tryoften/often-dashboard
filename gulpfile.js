@@ -15,19 +15,17 @@ gulp.task('clean', function () {
 
 gulp.task('copy', ['clean'], function () {
     return gulp
-        .src([
-            './public/**/*.*'
-        ], {base: './src'})
+        .src('src/public/**/*.*', {base: 'src'})
         .pipe(gulp.dest('dist'));
 });
 
-gulp.task('less', function () {
+gulp.task('less', ['clean', 'copy'], function () {
     return gulp.src('./src/less/style.less')
         .pipe(less())
         .pipe(gulp.dest('./dist/public/css'));
 });
 
-gulp.task('build-server', ['copy', 'less'], function () {
+gulp.task('build-server', ['clean', 'copy', 'less'], function () {
     return tsProject.src()
         .pipe(ts(tsProject))
         .js.pipe(gulp.dest(function (file) {
@@ -36,7 +34,7 @@ gulp.task('build-server', ['copy', 'less'], function () {
         }));
 });
 
-gulp.task('dist', ['build-server'], function () {
+gulp.task('dist', ['clean', 'copy', 'less', 'build-server'], function () {
     return gulp.src('src/main.tsx')
       .pipe(webpack( require('./webpack.config.js') ))
       .pipe(gulp.dest('dist/'));
