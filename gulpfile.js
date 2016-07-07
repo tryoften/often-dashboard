@@ -37,7 +37,7 @@ gulp.task('build-server', ['clean', 'copy', 'less'], function () {
 gulp.task('dist', ['clean', 'copy', 'less', 'build-server'], function () {
     return gulp.src('src/main.tsx')
       .pipe(webpack( require('./webpack.config.js') ))
-      .pipe(gulp.dest('dist/'));
+      .pipe(gulp.dest('dist/public/js'));
 });
 
 gulp.task('server-dev', ['dist'], function () {
