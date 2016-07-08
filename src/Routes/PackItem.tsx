@@ -261,7 +261,9 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 			rootRef: prodApp.database()
 		});
 
-		prodPack.save(pack.toJSON());
+		prodPack.syncData().then(() => {
+			prodPack.save(pack.toJSON());
+		});
 	}
 
 	render() {
