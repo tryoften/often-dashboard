@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Row, Col, Grid, ButtonToolbar, Button } from 'react-bootstrap';
 import { Link } from 'react-router';
-import PackView from '../Components/PackView';
-import { Packs } from '@often/often-core';
+import PackGroup from '../Components/PackGroup';
+import { Packs, Pack, Featured, MediaItemType } from '@often/often-core';
 import * as ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 interface PacksProps extends React.Props<PacksRoute> {
@@ -11,31 +11,55 @@ interface PacksProps extends React.Props<PacksRoute> {
 
 interface PacksState extends React.Props<PacksRoute> {
 	packs?: Packs;
-	loading?: boolean;
+	featured?: Featured;
+	featuredPacks?: Pack[];
+	loadingPacks?: boolean;
+	loadingFeatured?: boolean;
+	sampleSize?: number;
 }
 
 export default class PacksRoute extends React.Component<PacksProps, PacksState> {
+
 	constructor(props: PacksProps) {
 		super(props);
 
 		this.state = {
-			loading: true
+			loadingPacks: true,
+			loadingFeatured: true,
+			sampleSize: 5
 		};
 		this.updateCollection = this.updateCollection.bind(this);
+		this.updateFeaturedPacks = this.updateFeaturedPacks.bind(this);
 	}
 
 	updateCollection(collection: Packs) {
 		this.setState({
 			packs: collection,
-			loading: false
+			loadingPacks: false
+		});
+	}
+
+	updateFeaturedPacks(featured: Featured) {
+		this.setState({
+			featuredPacks: featured.items.map( indexableAttributes => {
+				return new Pack(indexableAttributes);
+			}),
+			loadingFeatured: false
 		});
 	}
 
 	componentDidMount() {
 		let state = {
 			packs: new Packs(),
-			loading: true
+			featured: new Featured({id: 'featuredPacks', type: MediaItemType.pack}),
+			featuredPacks: [],
+			loadingPacks: true,
+			loadingFeatured: true
 		};
+
+		state.featured.fetch({
+			success: this.updateFeaturedPacks
+		});
 		state.packs.fetch({
 			success: this.updateCollection
 		});
@@ -45,22 +69,30 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 
 	componentWillUnmount() {
 		this.state.packs.off('sync', this.updateCollection);
+		this.state.featured.off('sync', this.updateFeaturedPacks);
+
 	}
 
 	render() {
-		if (this.state.loading) {
-			return <div>Loading...</div>;
+
+
+		let packsHolder;
+		if (!this.state.loadingPacks) {
+			let packComponents = this.state.packs
+				.filter(pack => !pack.isFavorites && !pack.isRecents && !pack.deleted);
+			packsHolder = (<PackGroup items={packComponents} title="All Packs" edit={true} type="table"/>);
+		} else {
+			packsHolder = (<h4> Loading Packs...</h4>);
 		}
 
-		let packComponents = this.state.packs
-			.filter(pack => !pack.isFavorites && !pack.isRecents && !pack.deleted)
-			.map(pack => {
-				return (
-					<Link key={pack.id} to={`/pack/${pack.id}`}>
-						<PackView key={pack.id} model={pack}></PackView>
-					</Link>
-				);
-			});
+		let featuredHolder;
+		if (!this.state.loadingFeatured) {
+			let featuredComponents = this.state.featuredPacks
+				.filter(pack => !pack.isFavorites && !pack.isRecents && !pack.deleted);
+			featuredHolder = (<PackGroup items={featuredComponents} title="All Packs" edit={true} type="card"/>);
+		} else {
+			featuredHolder = (<h4> Loading Featured Packs...</h4>);
+		}
 
 		let content = this.props.children ? <div>{this.props.children}</div> : (
 			<div className="section">
@@ -68,24 +100,12 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 					<h2>Packs</h2>
 					<ButtonToolbar className="pull-right">
 						<Link to="/pack">
-							<Button bsStyle="primary" bsSize="small" active>Add Pack</Button>
+							<Button bsStyle="primary" bsSize="small" active>New Pack</Button>
 						</Link>
 					</ButtonToolbar>
 				</header>
-				<Grid fluid={true}>
-					<Row>
-						<Col sm={12}>
-							<div className="content">
-								<ReactCSSTransitionGroup
-									transitionName="pack"
-									transitionEnterTimeout={300}
-									transitionLeaveTimeout={300}>
-									{packComponents}
-								</ReactCSSTransitionGroup>
-							</div>
-						</Col>
-					</Row>
-				</Grid>
+				{featuredHolder}
+				{packsHolder}
 			</div>
 
 		);

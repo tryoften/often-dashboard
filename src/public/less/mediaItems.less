@@ -1,5 +1,22 @@
 .media-item-group {
-  h3 {
+  header {
+    .clearfix();
+    padding: 0 10px 5px;
+
+    .group-title {
+      float: left;
+      min-width: 200px;
+    }
+
+    .action-btn {
+      float: right;
+      padding-left: 20px;
+      color: @brand-primary;
+      text-align: right;
+    }
+  }
+
+  .group-title, .action-btn {
     text-transform: uppercase;
     font-family: "Open Sans", sans-serif;
     font-weight: 600;
@@ -7,9 +24,60 @@
     line-height: 2.7;
     letter-spacing: 1.5px;
     color: @gray;
+    border-bottom: 1px solid @gray-light;
+    padding-bottom: 5px;
+
+    &.table-header {
+      font-size: 9px;
+    }
+    &.table-text {
+      color: #202020;
+      font-size: 9px;
+      text-transform: none;
+      letter-spacing: 0.4px;
+    }
   }
 
-  padding: 0 10px;
+  &.table {
+
+    .image-container {
+      height: 27px;
+      width: 27px;
+      background-position: center;
+      background-size: cover;
+      background-image: url(http://placehold.it/27x27);
+    }
+
+    .image-cell {
+      line-height: 26px;
+      padding: 12px 10px 12px 20px;
+      width: 30px;
+    }
+
+    th {
+      border-bottom: none;
+    }
+
+    tbody {
+
+      tr {
+        height: 52px;
+        background-color: #FFFFFF;
+      }
+      tr:hover {
+        background-color: @gray-lighter;
+      }
+
+      td {
+        line-height: 30px;
+        padding: 10px 10px;
+        max-width: 70px;
+      }
+    }
+
+  }
+
+  padding: 0px 10px 10px;
 }
 
 .media-item-buttons {
