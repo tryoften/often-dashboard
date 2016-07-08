@@ -12,7 +12,7 @@ interface PackGroupProps {
 	edit?: boolean;
 }
 
-class PackGroupType extends String {
+export class PackGroupType extends String {
 	static table: PackGroupType = 'table';
 	static card: PackGroupType = 'card';
 }

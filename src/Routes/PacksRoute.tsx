@@ -1,9 +1,14 @@
 import * as React from 'react';
 import { Row, Col, Grid, ButtonToolbar, Button } from 'react-bootstrap';
 import { Link } from 'react-router';
-import PackGroup from '../Components/PackGroup';
-import { Packs, Pack, Featured, MediaItemType } from '@often/often-core';
+import PackGroup, { PackGroupType } from '../Components/PackGroup';
+import { Packs, Pack, Featured, MediaItemType, Sections } from '@often/often-core';
+import PackView from '../Components/PackView';
+
 import * as ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import ConfirmationButton from '../Components/ConfirmationButton';
+
+const firebase = require('firebase');
 
 interface PacksProps extends React.Props<PacksRoute> {
 	open?: boolean;
@@ -16,6 +21,7 @@ interface PacksState extends React.Props<PacksRoute> {
 	loadingPacks?: boolean;
 	loadingFeatured?: boolean;
 	sampleSize?: number;
+	sections?: Sections;
 }
 
 export default class PacksRoute extends React.Component<PacksProps, PacksState> {
@@ -29,6 +35,7 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 		};
 		this.updateCollection = this.updateCollection.bind(this);
 		this.updateFeaturedPacks = this.updateFeaturedPacks.bind(this);
+		this.onClickUpdateBrowse = this.onClickUpdateBrowse.bind(this);
 	}
 
 	updateCollection(collection: Packs) {
@@ -40,11 +47,22 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 
 	updateFeaturedPacks(featured: Featured) {
 		this.setState({
-			featuredPacks: featured.items.map( indexableAttributes => {
-				return new Pack(indexableAttributes);
-			}),
+			featuredPacks: featured.items.map( i =>  new Pack(i)),
 			loadingFeatured: false
 		});
+	}
+
+	updateBrowseSections() {
+		new Sections().fetch({
+			success: (sections) => {
+				var sectionAttributes = sections.toJSON();
+				console.log(sectionAttributes);
+				var sectionResult = this.state.packs.generateBrowseSections(sectionAttributes);
+
+				let sectionRef = firebase.database().ref(`/browse`);
+				sectionRef.set(sectionResult);
+			}
+		})
 	}
 
 	componentDidMount() {
@@ -72,6 +90,11 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 
 	}
 
+	onClickUpdateBrowse(e) {
+		e.preventDefault();
+		this.updateBrowseSections();
+	}
+
 	render() {
 
 		if (this.state.loadingFeatured || this.state.loadingPacks) {
@@ -90,15 +113,19 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 				<header className="section-header">
 					<h2>Packs</h2>
 					<ButtonToolbar className="pull-right">
+						<ConfirmationButton confirmationText="Are you sure you want to update browse on production?"
+											onClick={this.onClickUpdateBrowse}>
+							Update Browse
+						</ConfirmationButton>
+
 						<Link to="/pack">
 							<Button bsStyle="primary" bsSize="small" active>New Pack</Button>
 						</Link>
 					</ButtonToolbar>
 				</header>
-				{featuredComponents}
-				{packComponents}
+				<PackGroup items={featuredComponents} type={PackGroupType.card} edit={true} title="Featured Packs"/>
+				<PackGroup items={packComponents} type={PackGroupType.table} edit={true} title="All Packs"/>
 			</div>
-
 		);
 
 		return content;
