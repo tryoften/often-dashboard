@@ -25,8 +25,7 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 
 		this.state = {
 			loadingPacks: true,
-			loadingFeatured: true,
-			sampleSize: 5
+			loadingFeatured: true
 		};
 		this.updateCollection = this.updateCollection.bind(this);
 		this.updateFeaturedPacks = this.updateFeaturedPacks.bind(this);
@@ -75,24 +74,16 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 
 	render() {
 
-
-		let packsHolder;
-		if (!this.state.loadingPacks) {
-			let packComponents = this.state.packs
-				.filter(pack => !pack.isFavorites && !pack.isRecents && !pack.deleted);
-			packsHolder = (<PackGroup items={packComponents} title="All Packs" edit={true} type="table"/>);
-		} else {
-			packsHolder = (<h4> Loading Packs...</h4>);
+		if (this.state.loadingFeatured || this.state.loadingPacks) {
+			return <h4> Loading Packs...</h4>;
 		}
 
-		let featuredHolder;
-		if (!this.state.loadingFeatured) {
-			let featuredComponents = this.state.featuredPacks
-				.filter(pack => !pack.isFavorites && !pack.isRecents && !pack.deleted);
-			featuredHolder = (<PackGroup items={featuredComponents} title="All Packs" edit={true} type="card"/>);
-		} else {
-			featuredHolder = (<h4> Loading Featured Packs...</h4>);
-		}
+		let packComponents = this.state.packs
+			.filter(pack => !pack.isFavorites && !pack.isRecents && !pack.deleted);
+
+		let featuredComponents = this.state.featuredPacks
+			.filter(pack => !pack.isFavorites && !pack.isRecents && !pack.deleted);
+
 
 		let content = this.props.children ? <div>{this.props.children}</div> : (
 			<div className="section">
@@ -104,8 +95,8 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 						</Link>
 					</ButtonToolbar>
 				</header>
-				{featuredHolder}
-				{packsHolder}
+				{featuredComponents}
+				{packComponents}
 			</div>
 
 		);
