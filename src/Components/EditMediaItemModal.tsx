@@ -32,7 +32,6 @@ interface EditMediaItemModalState {
 }
 
 export default class EditMediaItemModal extends React.Component<EditMediaItemModalProps, EditMediaItemModalState> {
-
 	constructor(props: any) {
 		super(props);
 
@@ -160,7 +159,7 @@ export default class EditMediaItemModal extends React.Component<EditMediaItemMod
 
 		let modalHeader = (
 			<Modal.Header className="modal-header">
-				<h2>Edit Item</h2>
+				<Modal.Title>Edit Item</Modal.Title>
 			</Modal.Header>
 		);
 

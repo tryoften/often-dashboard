@@ -90,8 +90,7 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 
 	}
 
-	onClickUpdateBrowse(e) {
-		e.preventDefault();
+	onClickUpdateBrowse() {
 		this.updateBrowseSections();
 	}
 
@@ -114,7 +113,8 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 					<h2>Packs</h2>
 					<ButtonToolbar className="pull-right">
 						<ConfirmationButton confirmationText="Are you sure you want to update browse on production?"
-											onClick={this.onClickUpdateBrowse}>
+											bsSize="small"
+											onConfirmation={this.onClickUpdateBrowse}>
 							Update Browse
 						</ConfirmationButton>
 

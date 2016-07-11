@@ -65,7 +65,7 @@ export default class PaginationControl extends React.Component<PaginationControl
 	calculateNumberOfPages(): number {
 		let numItems = this.props.items.length || 0;
 		let pageNum = this.state.pageSize === 0 ? 0 : Math.floor(numItems / this.state.pageSize);
-		console.log('pageNum', pageNum);
+
 		return pageNum;
 	}
 
