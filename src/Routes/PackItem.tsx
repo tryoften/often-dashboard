@@ -155,6 +155,9 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		e.preventDefault();
 
 		this.setState({
+			shouldShowEditPackModal: false,
+			shouldShowEditMediaItemModal: false,
+			shouldShowImageSelectionPanel: false,
 			shouldShowAddItemModal: true
 		});
 	}
@@ -202,7 +205,10 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 
 		this.setState({
 			form: form,
-			shouldShowImageSelectionPanel: false
+			shouldShowEditPackModal: false,
+			shouldShowEditMediaItemModal: false,
+			shouldShowImageSelectionPanel: true,
+			shouldShowAddItemModal: false
 		});
 
 		this.state.model.save(form);
@@ -239,7 +245,10 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 	onClickEditMediaItem(item: IndexablePackItem) {
 		this.setState({
 			selectedItem: item,
-			shouldShowEditMediaItemModal: true
+			shouldShowEditPackModal: false,
+			shouldShowEditMediaItemModal: true,
+			shouldShowImageSelectionPanel: false,
+			shouldShowAddItemModal: false
 		});
 	}
 
@@ -321,7 +330,6 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 							</div>
 
 							<div className="media-item-group">
-								<h3>Items</h3>
 								<div className="items">
 									<PaginationControl items={items} />
 								</div>

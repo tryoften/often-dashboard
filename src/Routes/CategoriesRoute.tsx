@@ -43,7 +43,9 @@ export default class CategoriesRoute extends React.Component<CategoriesProps, Ca
 	}
 
 	componentWillUnmount() {
-		this.state.categories.off('sync', this.updateCollection);
+		if (this.state.categories) {
+			this.state.categories.off('sync', this.updateCollection);
+		}
 	}
 
 	render() {
