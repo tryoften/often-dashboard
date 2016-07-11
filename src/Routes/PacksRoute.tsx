@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { Row, Col, Grid, ButtonToolbar, Button } from 'react-bootstrap';
 import { Link } from 'react-router';
+import PackGroup, { PackGroupType } from '../Components/PackGroup';
+import { Packs, Pack, Featured, MediaItemType, Sections } from '@often/often-core';
 import PackView from '../Components/PackView';
-import { Packs, Sections } from '@often/often-core';
+
 import * as ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import ConfirmationButton from '../Components/ConfirmationButton';
 
@@ -14,25 +16,39 @@ interface PacksProps extends React.Props<PacksRoute> {
 
 interface PacksState extends React.Props<PacksRoute> {
 	packs?: Packs;
+	featured?: Featured;
+	featuredPacks?: Pack[];
+	loadingPacks?: boolean;
+	loadingFeatured?: boolean;
+	sampleSize?: number;
 	sections?: Sections;
-	loading?: boolean;
 }
 
 export default class PacksRoute extends React.Component<PacksProps, PacksState> {
+
 	constructor(props: PacksProps) {
 		super(props);
 
 		this.state = {
-			loading: true
+			loadingPacks: true,
+			loadingFeatured: true
 		};
 		this.updateCollection = this.updateCollection.bind(this);
+		this.updateFeaturedPacks = this.updateFeaturedPacks.bind(this);
 		this.onClickUpdateBrowse = this.onClickUpdateBrowse.bind(this);
 	}
 
 	updateCollection(collection: Packs) {
 		this.setState({
 			packs: collection,
-			loading: false
+			loadingPacks: false
+		});
+	}
+
+	updateFeaturedPacks(featured: Featured) {
+		this.setState({
+			featuredPacks: featured.items.map( i =>  new Pack(i)),
+			loadingFeatured: false
 		});
 	}
 
@@ -52,8 +68,15 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 	componentDidMount() {
 		let state = {
 			packs: new Packs(),
-			loading: true
+			featured: new Featured({id: 'featuredPacks', type: MediaItemType.pack}),
+			featuredPacks: [],
+			loadingPacks: true,
+			loadingFeatured: true
 		};
+
+		state.featured.fetch({
+			success: this.updateFeaturedPacks
+		});
 		state.packs.fetch({
 			success: this.updateCollection
 		});
@@ -63,6 +86,8 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 
 	componentWillUnmount() {
 		this.state.packs.off('sync', this.updateCollection);
+		this.state.featured.off('sync', this.updateFeaturedPacks);
+
 	}
 
 	onClickUpdateBrowse(e) {
@@ -71,19 +96,17 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 	}
 
 	render() {
-		if (this.state.loading) {
-			return <div>Loading...</div>;
+
+		if (this.state.loadingFeatured || this.state.loadingPacks) {
+			return <h4> Loading Packs...</h4>;
 		}
 
 		let packComponents = this.state.packs
-			.filter(pack => !pack.isFavorites && !pack.isRecents && !pack.deleted)
-			.map(pack => {
-				return (
-					<Link key={pack.id} to={`/pack/${pack.id}`}>
-						<PackView key={pack.id} model={pack}></PackView>
-					</Link>
-				);
-			});
+			.filter(pack => !pack.isFavorites && !pack.isRecents && !pack.deleted);
+
+		let featuredComponents = this.state.featuredPacks
+			.filter(pack => !pack.isFavorites && !pack.isRecents && !pack.deleted);
+
 
 		let content = this.props.children ? <div>{this.props.children}</div> : (
 			<div className="section">
@@ -96,19 +119,12 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 						</ConfirmationButton>
 
 						<Link to="/pack">
-							<Button bsStyle="primary" bsSize="small" active>Add Pack</Button>
+							<Button bsStyle="primary" bsSize="small" active>New Pack</Button>
 						</Link>
 					</ButtonToolbar>
 				</header>
-
-				<div className="content">
-					<ReactCSSTransitionGroup
-						transitionName="pack"
-						transitionEnterTimeout={300}
-						transitionLeaveTimeout={300}>
-						{packComponents}
-					</ReactCSSTransitionGroup>
-				</div>
+				<PackGroup items={featuredComponents} type={PackGroupType.card} edit={true} title="Featured Packs"/>
+				<PackGroup items={packComponents} type={PackGroupType.table} edit={true} title="All Packs"/>
 			</div>
 		);
 
