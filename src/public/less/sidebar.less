@@ -19,10 +19,71 @@
 
   #sidebar-container {
     margin: 10px 0;
-    padding: 10px;
     border-top: 1px solid @gray-lighter;
     border-bottom: 1px solid @gray-lighter;
+
+    .unselected {
+      color: #d3d3d3;
+    }
+
+    @rotation: rotate(270deg);
+    .selected {
+      transform:@rotation;
+      color:#000000
+    }
+
+    .row-block {
+      display: inline-block;
+      height: 50px;
+      width: 200px;
+    }
+    
+    @keyframes rotate-90 {
+      0%   {transform: rotate(-0deg);  color:#D3D3D3}
+      20%  {transform: rotate(-18deg); color:#C0C0C0}
+      40%  {transform: rotate(-36deg); color:#A9A9A9}
+      60%  {transform: rotate(-54deg); color:#808080}
+      80%  {transform: rotate(-72deg); color:#696969}
+      100% {transform: rotate(-90deg); color:#000000}
+    }
+
+    .row-block:active {
+      .unselected {
+        animation-name: rotate-90;
+        animation-duration: 200ms;
+        animation-fill-mode: forwards;
+        transform: @rotation;
+      }
+    }
+
+    .vertical-align {
+      line-height: 50px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .image-box {
+      height: 18px;
+      width: 18px;
+      background-color: #FFFFFF;
+      border-radius: 3px 3px;
+      margin-right: 15px;
+    }
+
+    .page {
+      font-family: "Open Sans";
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.4px;
+      min-width: 95px;
+      margin-right: 20px;
+      line-height: 30px;
+    }
+
+
+
   }
+
 
   .active {
     a {
