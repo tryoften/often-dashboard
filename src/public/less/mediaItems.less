@@ -6,6 +6,7 @@
     .group-title {
       float: left;
       min-width: 200px;
+      font-size: 12px;
     }
 
     .action-btn {
@@ -16,7 +17,11 @@
     }
   }
 
-  .group-title, .action-btn {
+  .items {
+    padding: 0 10px;
+  }
+
+  .group-title, .action-btn, th {
     text-transform: uppercase;
     font-family: "Open Sans", sans-serif;
     font-weight: 600;
@@ -39,7 +44,6 @@
   }
 
   &.table {
-
     .image-container {
       height: 27px;
       width: 27px;
@@ -54,18 +58,26 @@
       width: 30px;
     }
 
+    table {
+      background: none;
+      font-size: 10px;
+      margin-top: 10px;
+    }
+
     th {
       border-bottom: none;
     }
 
     tbody {
+      font-size: 12px;
+      border-radius: 2px;
 
       tr {
         height: 52px;
         background-color: #FFFFFF;
       }
       tr:hover {
-        background-color: @gray-lighter;
+        background-color: #f5f5f5;
       }
 
       td {
