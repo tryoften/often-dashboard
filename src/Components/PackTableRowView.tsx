@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Pack } from "@often/often-core";
-import { Thumbnail } from 'react-bootstrap';
+import { Thumbnail, Glyphicon } from 'react-bootstrap';
 
 export interface PackTableRowViewProps {
 	model: Pack;
@@ -18,6 +18,7 @@ export default class PackTableRowView extends React.Component<PackTableRowViewPr
 					<div className="image-container" style={{backgroundImage: `url(${model.get('image').large_url})`}}></div>
 				</td>
 				<td>{model.name}</td>
+				<td>{model.published ? <div className="published"><Glyphicon glyph="ok" /></div> : '' }</td>
 				<td>{model.section ? model.section.name : 'No Section'}</td>
 				<td>{model.items_count} Items</td>
 				<td>0 Shares</td>

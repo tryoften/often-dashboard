@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Grid, Row, Col, Input, Thumbnail, ButtonInput } from 'react-bootstrap';
 import { Category, CategoryAttributes } from '@often/often-core';
 import * as objectPath from 'object-path';
+import ConfirmationButton from '../Components/ConfirmationButton';
 
 interface CategoryItemProps extends React.Props<CategoryItem> {
 	params: {
@@ -62,6 +63,10 @@ export default class CategoryItem extends React.Component<CategoryItemProps, Cat
 		this.setState({model: model, isNew: false});
 	}
 
+	onClickDelete(e) {
+		e.preventDefault();
+	}
+
 	render() {
 		return (
 			<div className="section">
@@ -116,6 +121,8 @@ export default class CategoryItem extends React.Component<CategoryItemProps, Cat
 								<Row>
 									<Col xs={8}>
 										<ButtonInput type="submit" value={this.state.isNew ? 'Create' : 'Save'} />
+
+										<ConfirmationButton bsStyle="danger" onConfirmation={this.onClickDelete}>Delete</ConfirmationButton>
 									</Col>
 								</Row>
 							</form>

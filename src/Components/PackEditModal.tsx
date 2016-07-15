@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as objectPath from 'object-path';
+import { Link, browserHistory } from 'react-router';
 import { IndexableObject, Image, Pack, Section, SectionAttributes, Sections, PackAttributes } from '@often/often-core';
 import { Modal, Button, Alert, Grid, Row, Col, MenuItem, DropdownButton } from 'react-bootstrap';
-const { FormGroup, FormControl, ControlLabel, Checkbox } = require('react-bootstrap');
+const { FormGroup, FormControl, ControlLabel, Checkbox, InputGroup } = require('react-bootstrap');
 
 import ConfirmationButton from '../Components/ConfirmationButton';
 
@@ -27,7 +28,7 @@ export default class PackEditModal extends React.Component<PackEditModalProps, P
         super(props);
 
         this.state = {
-            isNew: false,
+            isNew: props.pack.isNew(),
             showModal: props.show,
             selectedSection: props.pack.section,
             model: props.pack,
@@ -87,6 +88,9 @@ export default class PackEditModal extends React.Component<PackEditModalProps, P
             case 'checkbox':
                 value = target.checked;
                 break;
+            case 'select-one':
+                value = JSON.parse(value);
+                break;
             default:
                 break;
         }
@@ -101,18 +105,17 @@ export default class PackEditModal extends React.Component<PackEditModalProps, P
         let model = this.state.model;
         let form = this.state.form;
 
-        var diff = model.featured !== form.featured;
         model.save(this.state.form);
-        /* Check if there's a discrepancy between featured flag on model and form */
-        if (diff) {
-            model.updateFeatured();
-        }
+        model.updateFeatured();
+
         this.setState({model: model, isNew: false, form: model.toJSON()});
         this.props.onSave();
     }
 
     onClickDelete(e) {
-        e.preventDefault();
+        this.state.model.destroy();
+        this.close();
+        browserHistory.push('/packs');
     }
 
     onClickSection(section: SectionAttributes) {
@@ -129,20 +132,23 @@ export default class PackEditModal extends React.Component<PackEditModalProps, P
 
     render() {
         let form = this.state.form;
+        let selectedSection = this.state.selectedSection || {};
+        let sectionValue = selectedSection ? JSON.stringify(selectedSection) : '';
+        let isNew = this.state.isNew;
 
         let sectionMenuItems = this.state.sections ? this.state.sections.map( section => {
-            return <MenuItem
+            return <option
                 key={section.id}
-                eventKey={section.id}
-                onClick={this.onClickSection.bind(this, section)}>
+                value={JSON.stringify(section)}
+                selected={selectedSection.id === section.id}>
                 {section.name}
-            </MenuItem>;
+            </option>;
         }) : '';
 
         return (
             <Modal show={this.state.showModal} onHide={this.close}>
                 <Modal.Header>
-                    <Modal.Title>Update Pack</Modal.Title>
+                    <Modal.Title>{isNew ? 'New Pack' : 'Update Pack'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <FormGroup>
@@ -175,29 +181,48 @@ export default class PackEditModal extends React.Component<PackEditModalProps, P
                     </FormGroup>
                     <FormGroup>
                         <ControlLabel>Select Section</ControlLabel>
-                        <DropdownButton
-                            id="select-section"
-                            bsStyle="default"
-                            title={this.state.selectedSection ? this.state.selectedSection.name : 'No Section'}
+                        <FormControl
+                            id="section"
+                            componentClass="select"
+                            onChange={this.handlePropChange}
                             block>
+                            <option value="">No Section</option>
                             {sectionMenuItems}
-                        </DropdownButton>
+                        </FormControl>
                     </FormGroup>
                     <FormGroup>
-                        <ControlLabel>Featured</ControlLabel>
                         <Checkbox
                             id="featured"
                             checked={form.featured}
-                            onChange={this.handlePropChange}/>
+                            onChange={this.handlePropChange}>
+                            Featured
+                        </Checkbox>
                     </FormGroup>
+                    {this.state.isNew ?
+                        <FormGroup>
+                            <ControlLabel>Upload a Photo</ControlLabel>
+                            <InputGroup>
+                                <FormControl
+                                    id="image_url"
+                                    onChange={this.handlePropChange}
+                                    type="text">
+                                </FormControl>
+                                <InputGroup.Addon>
+                                    <Button>Browse</Button>
+                                </InputGroup.Addon>
+                            </InputGroup>
+                        </FormGroup>
+                        : ''}
+
                 </Modal.Body>
                 <Modal.Footer>
                     <Button className="pull-left" onClick={this.close}>Cancel</Button>
+
+                    <ConfirmationButton bsStyle="danger" onConfirmation={this.onClickDelete}>Delete</ConfirmationButton>
                     <Button {...form.published ? {bsStyle: 'primary'} :  {}} onClick={this.togglePublish}>
                         { form.published ? 'Unpublish' : 'Publish'}
                     </Button>
                     <Button className="save-button" onClick={this.handleUpdate}>Save</Button>
-                    <ConfirmationButton bsStyle="danger" onConfirmation={this.onClickDelete}>Delete</ConfirmationButton>
                 </Modal.Footer>
             </Modal>
         );

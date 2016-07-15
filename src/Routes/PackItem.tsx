@@ -306,15 +306,14 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 					</Link>
 
 					<ButtonToolbar className="pull-right">
-						<ButtonGroup>
-							<Button onClick={this.onClickAddItem}><Glyphicon glyph="plus-sign" /> Add Item</Button>
-							<ConfirmationButton
-								onConfirmation={this.onClickUpdateProd}
-								confirmationText="Are you sure you want to publish/update this pack?"
-								bsStyle="default">
-								<Glyphicon glyph="upload"/> Publish
-							</ConfirmationButton>
-						</ButtonGroup>
+						<Button onClick={this.onClickAddItem}><Glyphicon glyph="plus-sign" /> Add Item</Button>
+
+						<ConfirmationButton
+							onConfirmation={this.onClickUpdateProd}
+							confirmationText="Are you sure you want to publish/update this pack?"
+							bsStyle="default">
+							<Glyphicon glyph="upload"/> Update
+						</ConfirmationButton>
 
 						<Button onClick={this.onClickEdit}>Edit</Button>
 					</ButtonToolbar>

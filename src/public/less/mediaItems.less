@@ -66,18 +66,28 @@
 
     th {
       border-bottom: none;
+
+      &.row-name {
+        width: 200px;
+      }
+
+      &.row-published {
+        width: 100px;
+      }
     }
 
     tbody {
       font-size: 12px;
       border-radius: 2px;
+      border: 1px solid @table-border-color;
 
       tr {
         height: 52px;
         background-color: #FFFFFF;
-      }
-      tr:hover {
-        background-color: #f5f5f5;
+
+        &:hover {
+          background-color: #f5f5f5;
+        }
       }
 
       td {

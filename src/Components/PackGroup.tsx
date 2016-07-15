@@ -42,10 +42,11 @@ export default class PackGroup extends React.Component<PackGroupProps, {}> {
 			});
 
 			packs = (
-				<table className="table">
+				<Table className="table" hover>
 					<thead className="table-header">
 						<tr>
-							<th colSpan="2">Pack Name</th>
+							<th className="row-name" colSpan="2">Pack Name</th>
+							<th className="row-published">Published</th>
 							<th>Section</th>
 							<th>Item Count</th>
 							<th>Share Count</th>
@@ -55,7 +56,7 @@ export default class PackGroup extends React.Component<PackGroupProps, {}> {
 					<tbody className="table-text">
 						{items}
 					</tbody>
-				</table>
+				</Table>
 			);
 		}
 
