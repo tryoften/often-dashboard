@@ -1,66 +1,215 @@
 import * as React from 'react';
-import { Modal, Button, Alert, Grid, Row, Col, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
-import { Pack } from '@often/often-core';
+import { Modal, Button, Alert, Grid, Row, Col } from 'react-bootstrap';
+import { Pack, Notification } from '@often/often-core';
+import { production as prodApp } from '../db';
+let FormGroup = require('react-bootstrap/lib/FormGroup');
+let FormControl = require('react-bootstrap/lib/FormControl');
+let ControlLabel = require('react-bootstrap/lib/ControlLabel');
+const firebase = require('firebase');
+
+class NotificationEnvironment extends String {
+    static dev: NotificationEnvironment = "dev";
+    static prod: NotificationEnvironment = "prod";
+}
+
+class NotificationScope extends String {
+    static pack: NotificationScope = "pack";
+    static global: NotificationScope = "global";
+}
 
 interface SendNotificationModalProps extends React.Props<SendNotificationModal> {
     show: boolean;
+    close: Function;
     pack: Pack;
 }
 
 interface SendNotificationModalState {
-    showModal: boolean;
+    showModal?: boolean;
+    packId?: string;
+    title?: string;
+    text?: string;
+    env?: NotificationEnvironment
+}
+
+
+
+interface NotificationTargetAttributes {
+    text: string;
+    scope: NotificationScope;
+    env: NotificationEnvironment;
 }
 
 export default class SendNotificationModal extends React.Component<SendNotificationModalProps, SendNotificationModalState> {
 
+    notificationTargets: any;
+
+    constructor (props: SendNotificationModalProps){
+        super(props);
+
+        this.notificationTargets = [{
+            text: "All Users (Dev)",
+            scope: NotificationScope.global,
+            env: NotificationEnvironment.dev
+        }, {
+            text: "Pack Followers (Dev)",
+            scope: NotificationScope.pack,
+            env: NotificationEnvironment.dev
+        }, {
+            text: "All Users (Prod)",
+            scope:  NotificationScope.global,
+            env: NotificationEnvironment.prod
+        }, {
+            text: "Pack Followers (Prod)",
+            scope: NotificationScope.pack,
+            env: NotificationEnvironment.prod
+        }];
+
+        this.state = {
+            showModal: this.props.show,
+            packId: NotificationScope.global.toString(),
+            title: "",
+            text: "",
+            env: NotificationEnvironment.dev
+        };
+
+        this.close = this.close.bind(this);
+    }
+
+    onUpdatePack() {
+        var rootRef;
+        if (this.state.env == NotificationEnvironment.dev) {
+            rootRef = firebase.database();
+        } else if (this.state.env == NotificationEnvironment.prod) {
+
+            rootRef = prodApp.database();
+            let prodPack = new Pack({
+                id: this.props.pack.id
+            }, {
+                autoSync: false,
+                setObjectMap: true,
+                rootRef: rootRef
+            });
+            prodPack.syncData().then(() => {
+                prodPack.save(this.props.pack.toJSON());
+            });
+        } else {
+            console.error('Environment not supported');
+            return;
+        }
+
+        let notif = new Notification({}, {
+            autoSync: false,
+            setObjectMap: false,
+            rootRef: rootRef
+        });
+
+        notif.save({
+            packId: this.state.packId,
+            title: this.state.title,
+            text: this.state.text
+        });
+
+        rootRef.ref('queues/notification/tasks').push({
+            notificationId: notif.id
+        });
+
+        this.close();
+    }
+
     onSaveChanges(e) {
         e.preventDefault();
-        this.props.onUpdatePackItems(this.state.selectedItems);
         this.setState({showModal: false});
     }
 
     close() {
+        this.props.close();
         this.setState({showModal: false});
     }
 
+    onSelectTarget(e: any) {
+
+        let targetsIndex = e.target.value;
+        let notifTarget = this.notificationTargets[targetsIndex];
+
+        this.setState({
+            packId: (notifTarget.scope == NotificationScope.pack) ? this.props.pack.id : NotificationScope.global,
+            env: (notifTarget.env == NotificationEnvironment.dev) ? NotificationEnvironment.dev : NotificationEnvironment.prod
+        });
+    }
+
+    onUpdateTitle(e: any) {
+        let newTitle = e.target.value;
+        this.setState({
+            title: newTitle
+        })
+    }
+
+    onUpdateText(e: any) {
+        let newText = e.target.value;
+        this.setState({
+            text: newText
+        })
+    }
+
+
     render() {
+
+        let dropdownOptions = this.notificationTargets.map( (t, i) => {
+            return (<option value={i} key={i} >{t.text}</option>)
+        });
+
         return (
-            <Modal show={this.state.showModal} onHide={this.cancel}>
-                <Model.Header>
-                    <h2>Update Pack</h2>
-                </Model.Header>
+            <Modal show={this.state.showModal} onHide={this.close}>
+                <Modal.Header>
+                    <h2>UpdatePack</h2>
+                    <h3>{this.state.packId} {this.state.env}</h3>
+                </Modal.Header>
                 <Modal.Body>
                     <div>
+                        <FormGroup controlId="updateTitle">
+                            <ControlLabel>Title</ControlLabel>
+                            <FormControl
+                                type="text"
+                                placeholder="Enter notification header here..."
+                                onChange={this.onUpdateTitle.bind(this)}
+                            />
+                        </FormGroup>
                         <FormGroup controlId="updateText">
                             <ControlLabel>Update notes</ControlLabel>
-                            <FormControl componentClass="textarea" />
+                            <FormControl
+                                componentClass="textarea"
+                                placeholder="Enter notification body here..."
+                                onChange={this.onUpdateText.bind(this)}
+                            />
                         </FormGroup>
-
                         <FormGroup controlId="target">
                             <ControlLabel>Send Push notifications to:</ControlLabel>
-                            <FormControl componentClass="select" placeholder="select">
-                                <option value="all">All Users (Global)</option>
-                                <option value="pack">Pack followers</option>
+                            <FormControl
+                                componentClass="select"
+                                placeholder="select"
+                                onChange={this.onSelectTarget.bind(this)}>
+                                {dropdownOptions}
                             </FormControl>
                         </FormGroup>
                     </div>
                 </Modal.Body>
-                <Model.Footer>
+                <Modal.Footer>
                     <Grid fluid>
                         <Row>
                             <Col md={1}>
-                                <Button onClick={this.cancel}>Cancel</Button>
+                                <Button onClick={this.close}>Cancel</Button>
                             </Col>
                             <Col md={1} mdOffset={7}>
-                                <ConfirmationButton bsStyle="default" onConfirmation={this.onClickRemove}> Remove </ConfirmationButton>
+
                             </Col>
                             <Col md={1} mdOffset={1} className="column-right-tilt">
-                                <Button className="save-button" onClick={this.save}>Save</Button>
+                                <Button className="save-button" onClick={this.onUpdatePack.bind(this)}>Update</Button>
                             </Col>
                         </Row>
                     </Grid>
-                </Model.Footer>
+                </Modal.Footer>
             </Modal>
         );
     }
+    //<ConfirmationButton bsStyle="default"> Remove </ConfirmationButton>
 }
