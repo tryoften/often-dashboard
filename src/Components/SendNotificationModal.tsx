@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Modal, Button, Alert, Grid, Row, Col } from 'react-bootstrap';
+import ConfirmationButton from './ConfirmationButton';
 import { Pack, Notification } from '@often/often-core';
 import { production as prodApp } from '../db';
 let FormGroup = require('react-bootstrap/lib/FormGroup');
@@ -31,8 +32,6 @@ interface SendNotificationModalState {
     env?: NotificationEnvironment
 }
 
-
-
 interface NotificationTargetAttributes {
     text: string;
     scope: NotificationScope;
@@ -41,10 +40,15 @@ interface NotificationTargetAttributes {
 
 export default class SendNotificationModal extends React.Component<SendNotificationModalProps, SendNotificationModalState> {
 
-    notificationTargets: any;
+    notificationTargets: NotificationTargetAttributes[];
+    titleCharLimit: number;
+    textCharLimit: number;
 
     constructor (props: SendNotificationModalProps){
         super(props);
+
+        this.titleCharLimit = 100;
+        this.textCharLimit = 107;
 
         this.notificationTargets = [{
             text: "All Users (Dev)",
@@ -139,6 +143,9 @@ export default class SendNotificationModal extends React.Component<SendNotificat
 
     onUpdateTitle(e: any) {
         let newTitle = e.target.value;
+        if (newTitle.length > this.titleCharLimit) {
+            return;
+        }
         this.setState({
             title: newTitle
         })
@@ -146,9 +153,12 @@ export default class SendNotificationModal extends React.Component<SendNotificat
 
     onUpdateText(e: any) {
         let newText = e.target.value;
+        if (newText.length > this.textCharLimit) {
+            return;
+        }
         this.setState({
             text: newText
-        })
+        });
     }
 
 
@@ -159,57 +169,66 @@ export default class SendNotificationModal extends React.Component<SendNotificat
         });
 
         return (
-            <Modal show={this.state.showModal} onHide={this.close}>
-                <Modal.Header>
-                    <h2>UpdatePack</h2>
-                    <h3>{this.state.packId} {this.state.env}</h3>
-                </Modal.Header>
-                <Modal.Body>
-                    <div>
-                        <FormGroup controlId="updateTitle">
-                            <ControlLabel>Title</ControlLabel>
-                            <FormControl
-                                type="text"
-                                placeholder="Enter notification header here..."
-                                onChange={this.onUpdateTitle.bind(this)}
-                            />
-                        </FormGroup>
-                        <FormGroup controlId="updateText">
-                            <ControlLabel>Update notes</ControlLabel>
-                            <FormControl
-                                componentClass="textarea"
-                                placeholder="Enter notification body here..."
-                                onChange={this.onUpdateText.bind(this)}
-                            />
-                        </FormGroup>
-                        <FormGroup controlId="target">
-                            <ControlLabel>Send Push notifications to:</ControlLabel>
-                            <FormControl
-                                componentClass="select"
-                                placeholder="select"
-                                onChange={this.onSelectTarget.bind(this)}>
-                                {dropdownOptions}
-                            </FormControl>
-                        </FormGroup>
-                    </div>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Grid fluid>
-                        <Row>
-                            <Col md={1}>
-                                <Button onClick={this.close}>Cancel</Button>
-                            </Col>
-                            <Col md={1} mdOffset={7}>
+                <Modal show={this.state.showModal} onHide={this.close}>
+                    <Modal.Header>
+                        <Modal.Title>Update Pack</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div className="notification-body">
+                            <FormGroup controlId="updateTitle">
+                                <div className="title">Title</div>
+                                <div className="title count">{this.titleCharLimit - this.state.title.length} Characters Left</div>
+                                <FormControl
+                                    type="text"
+                                    placeholder="Enter notification header here..."
+                                    value={this.state.title}
+                                    onChange={this.onUpdateTitle.bind(this)}
+                                />
+                            </FormGroup>
+                            <FormGroup controlId="updateText">
+                                <div className="title">Update Notes</div>
+                                <div className="title count">{this.textCharLimit - this.state.text.length} Characters Left</div>
+                                <FormControl
+                                    componentClass="textarea"
+                                    placeholder="Enter notification body here..."
+                                    value={this.state.text}
+                                    onChange={this.onUpdateText.bind(this)}
+                                />
+                            </FormGroup>
+                            <FormGroup controlId="target">
+                                <div className="title">Send Push notifications to:</div>
+                                <FormControl
+                                    componentClass="select"
+                                    placeholder="select"
+                                    onChange={this.onSelectTarget.bind(this)}>
+                                    {dropdownOptions}
+                                </FormControl>
+                            </FormGroup>
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Grid fluid>
+                            <Row>
+                                <Col md={1}>
+                                    <Button onClick={this.close}>Cancel</Button>
+                                </Col>
+                                <Col md={1} mdOffset={7}>
 
-                            </Col>
-                            <Col md={1} mdOffset={1} className="column-right-tilt">
-                                <Button className="save-button" onClick={this.onUpdatePack.bind(this)}>Update</Button>
-                            </Col>
-                        </Row>
-                    </Grid>
-                </Modal.Footer>
-            </Modal>
+                                </Col>
+                                <Col md={1} mdOffset={1} className="column-right-tilt">
+                                    <ConfirmationButton
+                                        bsStyle="primary"
+                                        confirmationText="Are you sure you want to publish this pack on production?"
+                                        onConfirmation={this.onUpdatePack.bind(this)}
+                                        disabled={!(this.state.title.length && this.state.text.length)}
+                                    >
+                                        Update
+                                    </ConfirmationButton>
+                                </Col>
+                            </Row>
+                        </Grid>
+                    </Modal.Footer>
+                </Modal>
         );
     }
-    //<ConfirmationButton bsStyle="default"> Remove </ConfirmationButton>
 }
