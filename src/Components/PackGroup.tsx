@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as classNames from 'classnames';
 import { Link, browserHistory } from 'react-router';
 import { Table } from 'react-bootstrap';
 import PackView from './PackView';
@@ -27,29 +28,39 @@ export default class PackGroup extends React.Component<PackGroupProps, {}> {
 		browserHistory.push(`/pack/${packId}`)
 	}
 	render() {
+		let classes = classNames('media-item-group', this.props.type.toString());
 		let packs;
+
 		if (this.props.type == PackGroupType.table) {
+			let items = this.props.items.map(pack => {
+				return (
+					<PackTableRowView
+						key={pack.id}
+						model={pack}
+						onClickPack={this.onClickPack.bind(this, pack.id)} />
+				);
+			});
+
 			packs = (
-				<table  className="media-item-group table">
-					<thead className="table-header group-title">
+				<Table className="table" hover>
+					<thead className="table-header">
 						<tr>
-							<th colSpan="2">Pack Name</th>
+							<th className="row-name" colSpan="2">Pack Name</th>
+							<th className="row-published">Published</th>
+							<th>Section</th>
 							<th>Item Count</th>
 							<th>Share Count</th>
 							<th>Engagement</th>
 						</tr>
 					</thead>
-					<tbody className="table-text group-title">
-						{
-							this.props.items.map(pack => {
-								return (
-									<PackTableRowView key={pack.id} model={pack} onClickPack={this.onClickPack.bind(this, pack.id)} />
-								)})
-							}
+					<tbody className="table-text">
+						{items}
 					</tbody>
-				</table>);
+				</Table>
+			);
+		}
 
-		} else if (this.props.type == PackGroupType.card) {
+		else if (this.props.type == PackGroupType.card) {
 			packs = this.props.items.map(pack => {
 				return (
 					<Link key={pack.id} to={`/pack/${pack.id}`}>
@@ -60,7 +71,7 @@ export default class PackGroup extends React.Component<PackGroupProps, {}> {
 		}
 
 		return (
-			<div className="media-item-group">
+			<div className={classes}>
 				<header>
 					<span className="group-title">{this.props.title}</span>
 					{(this.props.edit) ? <a className="action-btn">Edit</a> : <div></div> }

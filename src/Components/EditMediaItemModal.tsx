@@ -144,8 +144,8 @@ export default class EditMediaItemModal extends React.Component<EditMediaItemMod
 					categories={this.props.categories}
 					onClickCategory={this.onSelectCategory}
 					context={this}
-					title={ (this.state.selectedCategory) ? this.state.selectedCategory.name : "Ex: Type, Celebration, Yes, Happy"}
-					id={ this.props.item._id}
+					title={(this.state.selectedCategory) ? this.state.selectedCategory.name : "No Category"}
+					id={this.props.item._id}
 					block>
 				</CategoryAssignmentMenu>
 			</FormGroup>

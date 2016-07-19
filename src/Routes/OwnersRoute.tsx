@@ -56,7 +56,7 @@ export default class OwnersRoute extends React.Component<OwnersProps, OwnersStat
 					<Row>
 						<Col sm={12}>
 							<div className="content">
-								<PaginationControl items={ownerComponents} pageSize={20} />
+								{ownerComponents}
 							</div>
 						</Col>
 					</Row>

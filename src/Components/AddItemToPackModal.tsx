@@ -18,6 +18,7 @@ interface AddItemToPackModalState {
 	owners?: Owners;
 	selectedOwner?: Owner;
 	selectedItems?: IndexablePackItem[];
+	loading?: boolean;
 }
 
 export default class AddItemToPackModal extends React.Component<AddItemToPackModalProps, AddItemToPackModalState> {
@@ -31,7 +32,8 @@ export default class AddItemToPackModal extends React.Component<AddItemToPackMod
 		this.state = {
 			selectedItems: props.packItems || [],
 			showModal: props.show,
-			owners: this.owners
+			owners: this.owners,
+			loading: true
 		};
 
 		this.onSelectOwnerChange = this.onSelectOwnerChange.bind(this);
@@ -44,7 +46,8 @@ export default class AddItemToPackModal extends React.Component<AddItemToPackMod
 	updateStateWithModel(owners: Owners) {
 		this.setState({
 			owners,
-			selectedOwner: owners.models.length ? owners.models[0] : null
+			selectedOwner: owners.models.length ? owners.models[0] : null,
+			loading: false
 		});
 	}
 
@@ -99,9 +102,24 @@ export default class AddItemToPackModal extends React.Component<AddItemToPackMod
 	}
 
 	render() {
-		let ownersSelector = this.owners.sortBy('name').map(model => {
-			return <MenuItem key={model.id} value={model.id}>{model.get('name')}</MenuItem>;
-		});
+		if (this.state.loading) {
+			return (
+				<Modal className="add-item-modal" show={this.state.showModal} onHide={this.close.bind(this)} bsSize="large">
+					<Modal.Body>
+						<div>Loading...</div>
+					</Modal.Body>
+					<Modal.Footer>
+						<Button onClick={this.close.bind(this)}>Close</Button>
+					</Modal.Footer>
+				</Modal>
+			);
+		}
+
+		let ownersSelector = this.owners.sortBy('name')
+			.filter(model => model.name !== '')
+			.map(model => {
+				return <MenuItem key={model.id} value={model.id}>{model.get('name')}</MenuItem>;
+			});
 
 		let ownerQuotes = this.state.selectedOwner ? Object.keys(this.state.selectedOwner.get('quotes') || []).map(key => {
 			let quote = this.state.selectedOwner.get('quotes')[key];
@@ -132,7 +150,7 @@ export default class AddItemToPackModal extends React.Component<AddItemToPackMod
 		let ownerName = this.state.selectedOwner ? this.state.selectedOwner.get('name') : '';
 
 		return (
-			<Modal show={this.state.showModal} onHide={this.close.bind(this)} bsSize="large">
+			<Modal className="add-item-modal" show={this.state.showModal} onHide={this.close.bind(this)} bsSize="large">
 				<Modal.Header>
 					<ButtonGroup>
 						<DropdownButton

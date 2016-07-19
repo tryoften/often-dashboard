@@ -314,13 +314,6 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 			);
 		});
 
-		//<ConfirmationButton
-		//	onConfirmation={this.onClickPublish}
-		//	confirmationText="Are you sure you want to publish/update this pack?"
-		//	bsStyle="default">
-		//	<Glyphicon glyph="upload"/> Publish
-		//</ConfirmationButton>
-
 		return (
 			<div className={classes}>
 				<header className="section-header">
@@ -333,7 +326,6 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 							<Button onClick={this.onClickAddItem}><Glyphicon glyph="plus-sign" /> Add Item</Button>
 							<Button onClick={this.onClickPublish}><Glyphicon glyph="upload" /> Publish </Button>
 						</ButtonGroup>
-
 						<Button onClick={this.onClickEdit}>Edit</Button>
 					</ButtonToolbar>
 				</header>
@@ -388,6 +380,7 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 				{ this.state.shouldShowEditPackModal ?
 					<PackEditModal
 						show={this.state.shouldShowEditPackModal}
+						isNew={false}
 						pack={this.state.model}
 						onClose={this.onClosePackEditModal}
 						onSave={this.onSavePackEditModal}

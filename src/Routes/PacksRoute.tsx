@@ -4,9 +4,10 @@ import { Link } from 'react-router';
 import PackGroup, { PackGroupType } from '../Components/PackGroup';
 import { Packs, Pack, Featured, MediaItemType, Sections } from '@often/often-core';
 import PackView from '../Components/PackView';
-
+import { production as prodFirebase } from '../db';
 import * as ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import ConfirmationButton from '../Components/ConfirmationButton';
+import PackEditModal from '../Components/PackEditModal';
 
 const firebase = require('firebase');
 
@@ -22,6 +23,7 @@ interface PacksState extends React.Props<PacksRoute> {
 	loadingFeatured?: boolean;
 	sampleSize?: number;
 	sections?: Sections;
+	shouldShowNewPackModal?: boolean;
 }
 
 export default class PacksRoute extends React.Component<PacksProps, PacksState> {
@@ -31,11 +33,14 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 
 		this.state = {
 			loadingPacks: true,
-			loadingFeatured: true
+			loadingFeatured: true,
+			shouldShowNewPackModal: false
 		};
+
 		this.updateCollection = this.updateCollection.bind(this);
 		this.updateFeaturedPacks = this.updateFeaturedPacks.bind(this);
 		this.onClickUpdateBrowse = this.onClickUpdateBrowse.bind(this);
+		this.onClickNewPack = this.onClickNewPack.bind(this);
 	}
 
 	updateCollection(collection: Packs) {
@@ -47,13 +52,16 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 
 	updateFeaturedPacks(featured: Featured) {
 		this.setState({
-			featuredPacks: featured.items.map( i =>  new Pack(i)),
+			featuredPacks: featured.items.map( i =>  new Pack(i, {autoSync: false, setObjectMap: false})),
 			loadingFeatured: false
 		});
 	}
 
 	updateBrowseSections() {
-		new Sections().fetch({
+		let sections: any = new Sections();
+
+		sections.fetch({
+			autoSync: false,
 			success: (sections) => {
 				var sectionAttributes = sections.toJSON();
 				console.log(sectionAttributes);
@@ -61,8 +69,21 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 
 				let sectionRef = firebase.database().ref(`/browse`);
 				sectionRef.set(sectionResult);
+
+				prodFirebase.database().ref('/browse').set(sectionResult);
 			}
-		})
+		});
+
+		this.updateFeatured();
+	}
+
+	updateFeatured() {
+		this.state.featured.fetch({
+			success: (featured) => {
+				let data = featured.toJSON();
+				prodFirebase.database().ref('/featured/packs/0').set(data);
+			}
+		});
 	}
 
 	componentDidMount() {
@@ -94,13 +115,32 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 		this.updateBrowseSections();
 	}
 
+	onClickNewPack() {
+		this.setState({
+			shouldShowNewPackModal: true
+		});
+	}
+
+	onCloseNewPackModal() {
+		this.setState({
+			shouldShowNewPackModal: false
+		});
+	}
+
+	onSavePack() {
+		this.setState({
+			shouldShowNewPackModal: false
+		});
+	}
+
 	render() {
 
 		if (this.state.loadingFeatured || this.state.loadingPacks) {
-			return <h4> Loading Packs...</h4>;
+			return <div className="loader">Loading...</div>;
 		}
 
 		let packComponents = this.state.packs
+			.sortBy('name')
 			.filter(pack => !pack.isFavorites && !pack.isRecents && !pack.deleted);
 
 		let featuredComponents = this.state.featuredPacks
@@ -118,13 +158,26 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 							Update Browse
 						</ConfirmationButton>
 
-						<Link to="/pack">
-							<Button bsStyle="primary" bsSize="small" active>New Pack</Button>
-						</Link>
+						<Button
+							bsStyle="primary"
+							bsSize="small"
+							onClick={this.onClickNewPack}
+							active>
+							New Pack
+						</Button>
 					</ButtonToolbar>
 				</header>
 				<PackGroup items={featuredComponents} type={PackGroupType.card} edit={true} title="Featured Packs"/>
 				<PackGroup items={packComponents} type={PackGroupType.table} edit={true} title="All Packs"/>
+
+				{ this.state.shouldShowNewPackModal ?
+					<PackEditModal
+						show={this.state.shouldShowNewPackModal}
+						isNew={true}
+						pack={new Pack({}, {autoSync: false, generateId: true, setObjectMap: false})}
+						onClose={this.onCloseNewPackModal.bind(this)}
+						onSave={this.onSavePack.bind(this)}
+					/> : '' }
 			</div>
 		);
 

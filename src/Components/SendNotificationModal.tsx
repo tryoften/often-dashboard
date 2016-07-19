@@ -3,9 +3,8 @@ import { Modal, Button, Alert, Grid, Row, Col } from 'react-bootstrap';
 import ConfirmationButton from './ConfirmationButton';
 import { Pack, Notification } from '@often/often-core';
 import { production as prodApp } from '../db';
-let FormGroup = require('react-bootstrap/lib/FormGroup');
-let FormControl = require('react-bootstrap/lib/FormControl');
-let ControlLabel = require('react-bootstrap/lib/ControlLabel');
+
+const {FormGroup, FormControl, ControlPanel} = require('react-bootstrap');
 const firebase = require('firebase');
 
 class NotificationEnvironment extends String {
