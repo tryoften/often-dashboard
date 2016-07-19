@@ -12,6 +12,7 @@ interface PackEditModalProps extends React.Props<PackEditModal> {
     pack: Pack;
     onClose: () => void;
     onSave: () => void;
+    isNew: boolean;
 }
 
 interface PackEditModalState extends React.Props<PackEditModal> {
@@ -28,7 +29,7 @@ export default class PackEditModal extends React.Component<PackEditModalProps, P
         super(props);
 
         this.state = {
-            isNew: props.pack.isNew(),
+            isNew: props.isNew,
             showModal: props.show,
             selectedSection: props.pack.section,
             model: props.pack,
@@ -102,10 +103,16 @@ export default class PackEditModal extends React.Component<PackEditModalProps, P
     handleUpdate(e) {
         e.preventDefault();
 
-        let model = this.state.model;
+        let model: any = this.state.model;
         let form = this.state.form;
 
-        model.save(this.state.form);
+        model.save(form, {
+            success: () => {
+                if (this.state.isNew) {
+                    browserHistory.push(`/pack/${model.id}`);
+                }
+            }
+        });
         model.updateFeatured();
 
         this.setState({model: model, isNew: false, form: model.toJSON()});
@@ -144,6 +151,18 @@ export default class PackEditModal extends React.Component<PackEditModalProps, P
                 {section.name}
             </option>;
         }) : '';
+
+        let publishButton = !isNew ?
+            (<Button {...form.published ? {bsStyle: 'primary'} : {}} onClick={this.togglePublish}>
+                { form.published ? 'Unpublish' : 'Publish'}
+            </Button>)
+         : '';
+
+        let deleteButton = !isNew ?
+            <ConfirmationButton bsStyle="danger" onConfirmation={this.onClickDelete}>
+                Delete
+            </ConfirmationButton>
+            : '';
 
         return (
             <Modal show={this.state.showModal} onHide={this.close}>
@@ -217,11 +236,8 @@ export default class PackEditModal extends React.Component<PackEditModalProps, P
                 </Modal.Body>
                 <Modal.Footer>
                     <Button className="pull-left" onClick={this.close}>Cancel</Button>
-
-                    <ConfirmationButton bsStyle="danger" onConfirmation={this.onClickDelete}>Delete</ConfirmationButton>
-                    <Button {...form.published ? {bsStyle: 'primary'} :  {}} onClick={this.togglePublish}>
-                        { form.published ? 'Unpublish' : 'Publish'}
-                    </Button>
+                    {publishButton}
+                    {deleteButton}
                     <Button className="save-button" onClick={this.handleUpdate}>Save</Button>
                 </Modal.Footer>
             </Modal>

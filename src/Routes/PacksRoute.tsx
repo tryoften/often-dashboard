@@ -52,7 +52,7 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 
 	updateFeaturedPacks(featured: Featured) {
 		this.setState({
-			featuredPacks: featured.items.map( i =>  new Pack(i)),
+			featuredPacks: featured.items.map( i =>  new Pack(i, {autoSync: false, setObjectMap: false})),
 			loadingFeatured: false
 		});
 	}
@@ -158,7 +158,6 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 							Update Browse
 						</ConfirmationButton>
 
-
 						<Button
 							bsStyle="primary"
 							bsSize="small"
@@ -166,7 +165,6 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 							active>
 							New Pack
 						</Button>
-
 					</ButtonToolbar>
 				</header>
 				<PackGroup items={featuredComponents} type={PackGroupType.card} edit={true} title="Featured Packs"/>
@@ -175,7 +173,8 @@ export default class PacksRoute extends React.Component<PacksProps, PacksState> 
 				{ this.state.shouldShowNewPackModal ?
 					<PackEditModal
 						show={this.state.shouldShowNewPackModal}
-						pack={new Pack({id: null})}
+						isNew={true}
+						pack={new Pack({}, {autoSync: false, generateId: true, setObjectMap: false})}
 						onClose={this.onCloseNewPackModal.bind(this)}
 						onSave={this.onSavePack.bind(this)}
 					/> : '' }

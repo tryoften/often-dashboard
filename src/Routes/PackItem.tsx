@@ -369,6 +369,7 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 				{ this.state.shouldShowEditPackModal ?
 					<PackEditModal
 						show={this.state.shouldShowEditPackModal}
+						isNew={false}
 						pack={this.state.model}
 						onClose={this.onClosePackEditModal}
 						onSave={this.onSavePackEditModal}
