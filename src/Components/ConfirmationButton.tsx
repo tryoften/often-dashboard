@@ -15,10 +15,14 @@ export default class ConfirmationButton extends React.Component<ConfirmationButt
 			this.props.onConfirmation(true);
 		}
 	}
-
 	render() {
 		return (
-			<Button {...this.props} bsStyle={this.props.bsStyle || "default"} onClick={this.onClick.bind(this)} disabled={this.props.disabled}>{this.props.children}</Button>
+			<Button {...this.props}
+				bsStyle={this.props.bsStyle || "default"}
+				onClick={this.onClick.bind(this)}
+				>
+				{this.props.children}
+			</Button>
 		);
 	}
 }

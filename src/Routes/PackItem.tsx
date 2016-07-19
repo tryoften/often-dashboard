@@ -15,6 +15,7 @@ import ImageSelectionModal from '../Components/ImageSelectionModal';
 import EditMediaItemModal from '../Components/EditMediaItemModal';
 import PaginationControl from '../Components/PaginationControl';
 import PackEditModal from '../Components/PackEditModal';
+import SendNotificationModal from '../Components/SendNotificationModal';
 
 interface PackItemProps extends React.Props<PackItem> {
 	params: {
@@ -28,6 +29,7 @@ interface PackItemState extends React.Props<PackItem> {
 	shouldShowImageSelectionPanel?: boolean;
 	shouldShowEditMediaItemModal?: boolean;
 	shouldShowEditPackModal?: boolean;
+	shouldShowNotificationModal?: boolean;
 	isNew?: boolean;
 	form?: PackAttributes;
 	categories?: Categories;
@@ -47,6 +49,7 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 			shouldShowEditMediaItemModal: false,
 			shouldShowImageSelectionPanel: false,
 			shouldShowEditPackModal: false,
+			shouldShowNotificationModal: false,
 			loading: true,
 			isNew: isNew
 		};
@@ -67,6 +70,7 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		this.onClickUpdateProd = this.onClickUpdateProd.bind(this);
 		this.onClickEdit = this.onClickEdit.bind(this);
 		this.onSavePackEditModal = this.onSavePackEditModal.bind(this);
+		this.onClickPublish = this.onClickPublish.bind(this);
 	}
 
 	componentDidMount() {
@@ -232,6 +236,18 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 		})
 	}
 
+	onClickPublish() {
+		this.setState({
+			shouldShowNotificationModal: true
+		});
+	}
+
+	onClosePublish() {
+		this.setState({
+			shouldShowNotificationModal: false
+		});
+	}
+
 	onSavePackEditModal() {
 		let model = this.state.model;
 
@@ -306,15 +322,10 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 					</Link>
 
 					<ButtonToolbar className="pull-right">
-						<Button onClick={this.onClickAddItem}><Glyphicon glyph="plus-sign" /> Add Item</Button>
-
-						<ConfirmationButton
-							onConfirmation={this.onClickUpdateProd}
-							confirmationText="Are you sure you want to publish/update this pack?"
-							bsStyle="default">
-							<Glyphicon glyph="upload"/> Update
-						</ConfirmationButton>
-
+						<ButtonGroup>
+							<Button onClick={this.onClickAddItem}><Glyphicon glyph="plus-sign" /> Add Item</Button>
+							<Button onClick={this.onClickPublish}><Glyphicon glyph="upload" /> Publish </Button>
+						</ButtonGroup>
 						<Button onClick={this.onClickEdit}>Edit</Button>
 					</ButtonToolbar>
 				</header>
@@ -373,6 +384,13 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 						pack={this.state.model}
 						onClose={this.onClosePackEditModal}
 						onSave={this.onSavePackEditModal}
+					/> : '' }
+
+				{ this.state.shouldShowNotificationModal ?
+					<SendNotificationModal
+						show={this.state.shouldShowNotificationModal}
+						close={this.onClosePublish.bind(this)}
+						pack={this.state.model}
 					/> : '' }
 
 			</div>
