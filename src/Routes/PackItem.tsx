@@ -322,10 +322,8 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 					</Link>
 
 					<ButtonToolbar className="pull-right">
-						<ButtonGroup>
-							<Button onClick={this.onClickAddItem}><Glyphicon glyph="plus-sign" /> Add Item</Button>
-							<Button onClick={this.onClickPublish}><Glyphicon glyph="upload" /> Publish </Button>
-						</ButtonGroup>
+						<Button onClick={this.onClickAddItem}><Glyphicon glyph="plus-sign" /> Add Item</Button>
+						<Button onClick={this.onClickPublish}><Glyphicon glyph="upload" /> Upload </Button>
 						<Button onClick={this.onClickEdit}>Edit</Button>
 					</ButtonToolbar>
 				</header>

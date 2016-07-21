@@ -185,8 +185,6 @@ export default class OwnerItem extends React.Component<OwnerItemProps, OwnerItem
 								</Row>
 								<Row>
 									<div className="media-item-group">
-										<h3>Items</h3>
-
 										<div className="items clearfix">
 											<Tabs defaultActiveKey={0}>
 												<Tab eventKey={0} title="GIFs">
