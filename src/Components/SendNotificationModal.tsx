@@ -25,7 +25,7 @@ interface SendNotificationModalProps extends React.Props<SendNotificationModal> 
 
 interface SendNotificationModalState {
     showModal?: boolean;
-    packId?: string;
+    target?: string;
     title?: string;
     text?: string;
     env?: NotificationEnvironment
@@ -69,7 +69,7 @@ export default class SendNotificationModal extends React.Component<SendNotificat
 
         this.state = {
             showModal: this.props.show,
-            packId: NotificationScope.global.toString(),
+            target: NotificationScope.global.toString(),
             title: "",
             text: "",
             env: NotificationEnvironment.dev
@@ -107,7 +107,8 @@ export default class SendNotificationModal extends React.Component<SendNotificat
         });
 
         notif.save({
-            packId: this.state.packId,
+            packId: this.props.pack.id,
+            target: this.state.target,
             title: this.state.title,
             text: this.state.text
         });
@@ -135,7 +136,7 @@ export default class SendNotificationModal extends React.Component<SendNotificat
         let notifTarget = this.notificationTargets[targetsIndex];
 
         this.setState({
-            packId: (notifTarget.scope == NotificationScope.pack) ? this.props.pack.id : NotificationScope.global,
+            target: (notifTarget.scope == NotificationScope.pack) ? this.props.pack.id : NotificationScope.global,
             env: (notifTarget.env == NotificationEnvironment.dev) ? NotificationEnvironment.dev : NotificationEnvironment.prod
         });
     }
@@ -162,7 +163,6 @@ export default class SendNotificationModal extends React.Component<SendNotificat
 
 
     render() {
-
         let dropdownOptions = this.notificationTargets.map( (t, i) => {
             return (<option value={i} key={i} >{t.text}</option>)
         });

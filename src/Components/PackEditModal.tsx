@@ -209,29 +209,17 @@ export default class PackEditModal extends React.Component<PackEditModalProps, P
                             {sectionMenuItems}
                         </FormControl>
                     </FormGroup>
-                    <FormGroup>
-                        <Checkbox
-                            id="featured"
-                            checked={form.featured}
-                            onChange={this.handlePropChange}>
-                            Featured
-                        </Checkbox>
-                    </FormGroup>
-                    {this.state.isNew ?
+
+                    { !this.state.isNew ?
                         <FormGroup>
-                            <ControlLabel>Upload a Photo</ControlLabel>
-                            <InputGroup>
-                                <FormControl
-                                    id="image_url"
-                                    onChange={this.handlePropChange}
-                                    type="text">
-                                </FormControl>
-                                <InputGroup.Addon>
-                                    <Button>Browse</Button>
-                                </InputGroup.Addon>
-                            </InputGroup>
+                            <Checkbox
+                                id="featured"
+                                checked={form.featured}
+                                onChange={this.handlePropChange}>
+                                Featured
+                            </Checkbox>
                         </FormGroup>
-                        : ''}
+                        : '' }
 
                 </Modal.Body>
                 <Modal.Footer>
