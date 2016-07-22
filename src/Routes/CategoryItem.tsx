@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Grid, Row, Col, Input, Thumbnail, ButtonInput } from 'react-bootstrap';
+import { browserHistory } from 'react-router';
 import { Category, CategoryAttributes } from '@often/often-core';
 import * as objectPath from 'object-path';
 import ConfirmationButton from '../Components/ConfirmationButton';
@@ -32,6 +33,7 @@ export default class CategoryItem extends React.Component<CategoryItemProps, Cat
 		category.on('update', this.updateStateWithModel.bind(this));
 		this.handleUpdate = this.handleUpdate.bind(this);
 		this.handlePropChange = this.handlePropChange.bind(this);
+		this.onClickDelete = this.onClickDelete.bind(this);
 		category.syncData();
 	}
 
@@ -64,7 +66,8 @@ export default class CategoryItem extends React.Component<CategoryItemProps, Cat
 	}
 
 	onClickDelete(e) {
-		e.preventDefault();
+		this.state.model.destroy();
+		browserHistory.push('/categories');
 	}
 
 	render() {
