@@ -69,7 +69,7 @@ export default class AddItemToPackModal extends React.Component<AddItemToPackMod
 	}
 
 	onSelectOwnerChange(ownerKey: any, e: any) {
-		let owner = this.state.owners.get(e.target.value);
+		let owner = this.state.owners.get(ownerKey);
 		this.setState({selectedOwner: owner});
 	}
 
@@ -118,7 +118,10 @@ export default class AddItemToPackModal extends React.Component<AddItemToPackMod
 		let ownersSelector = this.owners.sortBy('name')
 			.filter(model => model.name !== '')
 			.map(model => {
-				return <MenuItem key={model.id} value={model.id}>{model.get('name')}</MenuItem>;
+				return <MenuItem
+					key={model.id}
+					onClick={this.onSelectOwnerChange.bind(this, model.id)}
+					value={model.id}>{model.get('name')}</MenuItem>;
 			});
 
 		let ownerQuotes = this.state.selectedOwner ? Object.keys(this.state.selectedOwner.get('quotes') || []).map(key => {
@@ -156,8 +159,7 @@ export default class AddItemToPackModal extends React.Component<AddItemToPackMod
 						<DropdownButton
 							id="owner-dropdown"
 							title={ownerName}
-							label="Select Owner"
-							onSelect={this.onSelectOwnerChange}>
+							label="Select Owner">
 							{ownersSelector}
 						</DropdownButton>
 					</ButtonGroup>
