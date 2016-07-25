@@ -16,6 +16,7 @@ interface OwnerItemProps extends React.Props<OwnerItem> {
 interface OwnerItemState extends React.Props<OwnerItem> {
 	isNew?: boolean;
 	model?: Owner;
+	loading?: boolean;
 	shouldShowQuoteForm?: boolean;
 	shouldShowGIFForm?: boolean;
 	currentQuoteId?: string;
@@ -27,37 +28,40 @@ export default class OwnerItem extends React.Component<OwnerItemProps, OwnerItem
 	constructor(props: OwnerItemProps) {
 		super(props);
 
-		let isNew = false;
-
-		var attr: any = {};
-		if (props.params.ownerId) {
-			attr.id = props.params.ownerId;
-		} else {
-			isNew = true;
-		}
-		let owner = new Owner(attr);
+		let isNew = !props.params.ownerId;
 
 		this.state = {
-			model: owner,
 			isNew: isNew,
-			form: owner.toJSON(),
+			loading: true,
 			shouldShowQuoteForm: false,
 			shouldShowGIFForm: false
 		};
 
-		_.bindAll(this, 'updateState', 'handlePropChange', 'handleUpdate', 'onClickQuote');
-		owner.on('update', this.updateState.bind(this));
-		owner.syncData();
+		this.updateOwnerState = this.updateOwnerState.bind(this);
+		this.handlePropChange = this.handlePropChange.bind(this);
+		this.handleUpdate = this.handleUpdate.bind(this);
+		this.onClickQuote = this.onClickQuote.bind(this);
+
 	}
 
 	componentDidMount() {
-		this.state.model.fetch({
-			success: this.updateState.bind(this)
+		let owner = this.state.isNew ? new Owner(): new Owner({
+			id: this.props.params.ownerId
+		});
+
+		owner.on('update', this.updateOwnerState);
+		owner.fetch({
+			success: this.updateOwnerState.bind(this)
 		});
 	}
 
-	updateState(owner: Owner) {
+	componentWillUnmount() {
+		this.state.model.off('update')
+	}
+
+	updateOwnerState(owner: Owner) {
 		this.setState({
+			loading: false,
 			model: owner,
 			form: owner.toJSON()
 		});
@@ -74,7 +78,7 @@ export default class OwnerItem extends React.Component<OwnerItemProps, OwnerItem
 		e.preventDefault();
 
 		let model = this.state.model;
-		let form = _.extend({}, this.state.model.toIndexingFormat(), this.state.form);
+		let form = _.extend({}, this.state.model.toJSON(), this.state.form);
 		model.save(form);
 		this.setState({model: model, isNew: false, form});
 	}
@@ -99,12 +103,13 @@ export default class OwnerItem extends React.Component<OwnerItemProps, OwnerItem
 
 	close() {
 		this.setState({shouldShowQuoteForm: false, shouldShowGIFForm: false});
-		this.state.model.syncData().then((model) => {
-			this.setState({model: this.state.model});
-		});
 	}
 
 	render() {
+		if(this.state.loading) {
+			return <div>Loading...</div>
+		}
+
 		var itemsComponents = Object.keys(this.state.model.quotes || []).map(key => {
 			let item = this.state.model.quotes[key];
 			return <MediaItemView key={key} item={item} onSelect={this.onClickQuote.bind(this)} />;
@@ -180,7 +185,6 @@ export default class OwnerItem extends React.Component<OwnerItemProps, OwnerItem
 								<Row>
 									<Col xs={8}>
 										<ButtonInput type="submit" value={this.state.isNew ? 'Create' : 'Save'} />
-
 									</Col>
 								</Row>
 								<Row>

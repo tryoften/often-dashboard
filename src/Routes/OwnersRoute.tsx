@@ -11,27 +11,50 @@ interface OwnersProps extends React.Props<OwnersRoute> {
 
 interface OwnersState extends React.Props<OwnersRoute> {
 	owners?: Owners;
+	loadingOwners?: boolean;
 }
 
 export default class OwnersRoute extends React.Component<OwnersProps, OwnersState> {
-	owners: Owners;
 
 	constructor(props: OwnersProps) {
 		super(props);
-
-		this.owners = new Owners();
 		this.state = {
-			owners: this.owners
+			loadingOwners: true
+		};
+		this.updateOwners = this.updateOwners.bind(this);
+	}
+
+	componentDidMount() {
+
+		let state = {
+			owners: new Owners()
 		};
 
-		this.owners.on('update', () => {
-			this.setState({
-				owners: this.owners
-			});
+		state.owners.on('update', this.updateOwners);
+
+		state.owners.fetch({
+			success: this.updateOwners
+		});
+
+		this.setState(state);
+	}
+
+	componentWillUnmount() {
+		this.state.owners.off('update');
+	}
+
+	updateOwners(owners: Owners) {
+		this.setState({
+			owners: owners,
+			loadingOwners: false
 		});
 	}
 
 	render() {
+
+		if(this.state.loadingOwners) {
+			return <div>Loading...</div>
+		}
 		let ownerComponents = this.state.owners.sortBy('name').map(owner => {
 			return (
 				<Link key={owner.id} to={`/owner/${owner.id}`}>
