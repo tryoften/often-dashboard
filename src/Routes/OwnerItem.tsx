@@ -1,11 +1,13 @@
 import * as React from 'react';
 import * as _ from 'underscore';
 import * as objectPath from 'object-path';
+import { browserHistory } from 'react-router';
 import { Grid, Row, Col, Input, Thumbnail, ButtonInput, Button, Tabs, Tab } from 'react-bootstrap';
 import { Owner, OwnerAttributes, IndexableObject } from '@often/often-core';
 import QuoteForm from '../Components/QuoteForm';
 import GIFForm from '../Components/GIFForm';
 import MediaItemView from '../Components/MediaItemView';
+import ConfirmationButton from '../Components/ConfirmationButton';
 
 interface OwnerItemProps extends React.Props<OwnerItem> {
 	params: {
@@ -41,6 +43,7 @@ export default class OwnerItem extends React.Component<OwnerItemProps, OwnerItem
 		this.handlePropChange = this.handlePropChange.bind(this);
 		this.handleUpdate = this.handleUpdate.bind(this);
 		this.onClickQuote = this.onClickQuote.bind(this);
+		this.onClickDelete = this.onClickDelete.bind(this);
 
 	}
 
@@ -105,10 +108,25 @@ export default class OwnerItem extends React.Component<OwnerItemProps, OwnerItem
 		this.setState({shouldShowQuoteForm: false, shouldShowGIFForm: false});
 	}
 
+	onClickDelete(e) {
+		this.state.model.destroy();
+		browserHistory.push('/owners');
+	}
+
 	render() {
 		if(this.state.loading) {
 			return <div>Loading...</div>
 		}
+
+		let deleteButton = !this.state.isNew ?
+			<ConfirmationButton
+				bsStyle="danger"
+				onConfirmation={this.onClickDelete}
+				confirmationText="Are you sure you want to delete this owner?"
+			>
+				Delete
+			</ConfirmationButton>
+			: '';
 
 		var itemsComponents = Object.keys(this.state.model.quotes || []).map(key => {
 			let item = this.state.model.quotes[key];
@@ -185,6 +203,9 @@ export default class OwnerItem extends React.Component<OwnerItemProps, OwnerItem
 								<Row>
 									<Col xs={8}>
 										<ButtonInput type="submit" value={this.state.isNew ? 'Create' : 'Save'} />
+									</Col>
+									<Col xs={4}>
+										{deleteButton}
 									</Col>
 								</Row>
 								<Row>
