@@ -13,7 +13,7 @@ import ConfirmationButton from '../Components/ConfirmationButton';
 import MediaItemView from '../Components/MediaItemView';
 import ImageSelectionModal from '../Components/ImageSelectionModal';
 import EditMediaItemModal from '../Components/EditMediaItemModal';
-import PaginationControl from '../Components/PaginationControl';
+import InfiniteScrollPagination from '../Components/InfiniteScrollPagination';
 import PackEditModal from '../Components/PackEditModal';
 import SendNotificationModal from '../Components/SendNotificationModal';
 
@@ -341,7 +341,7 @@ export default class PackItem extends React.Component<PackItemProps, PackItemSta
 
 							<div className="media-item-group">
 								<div className="items">
-									<PaginationControl items={items} />
+									<InfiniteScrollPagination items={items} />
 								</div>
 							</div>
 						</Col>
