@@ -10,6 +10,7 @@ export interface IndexRange {
 
 interface InfiniteScrollProps extends React.Props<InfiniteScrollPagination> {
 	items: React.ReactNode[];
+	pageSize?: number;
 }
 
 interface InfiniteScrollState {
@@ -31,18 +32,24 @@ export default class InfiniteScrollPagination extends React.Component<InfiniteSc
 
 		this.loadMore = this.loadMore.bind(this);
 		this.getIndexRange = this.getIndexRange.bind(this);
+		this.getPageSize = this.getPageSize.bind(this);
 	}
 
 	componentDidMount() {
+		let range = this.getIndexRange(0);
 		this.setState({
-			items:  this.props.items.slice(0, InfiniteScrollPagination.DEFAULT_PAGE_SIZE),
+			items:  this.props.items.slice(range.start, range.end),
 			hasMore: true
 		});
 	}
 
+	getPageSize(): number {
+		return this.props.pageSize || InfiniteScrollPagination.DEFAULT_PAGE_SIZE;
+	}
+
 	getIndexRange(pageToLoad: number) {
-		let start = pageToLoad * InfiniteScrollPagination.DEFAULT_PAGE_SIZE;
-		let end = Math.min(start + InfiniteScrollPagination.DEFAULT_PAGE_SIZE, this.props.items.length - 1);
+		let start = pageToLoad * this.getPageSize();
+		let end = Math.min(start + this.getPageSize(), this.props.items.length - 1);
 
 		return {
 			start: start,
@@ -72,9 +79,7 @@ export default class InfiniteScrollPagination extends React.Component<InfiniteSc
 				hasMore={this.state.hasMore}
 				loader={<div className="loader">Loading ...</div>}>
 				<div className="pagination">
-					<div className="items">
-						{this.state.items}
-					</div>
+					{this.state.items}
 				</div>
 			</InfiniteScroll>
 		);
