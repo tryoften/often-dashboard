@@ -17,7 +17,8 @@ export default class MediaItemView extends React.Component<SearchResultItemViewP
 	}
 
 	render() {
-		let classes = classNames("media-item pull-left", this.props.item._type.toString(), {"selected": this.props.selected});
+		let type = this.props.item ? ( this.props.item._type || '').toString() : '';
+		let classes = classNames("media-item pull-left", type, {"selected": this.props.selected});
 
 		switch (this.props.item._type) {
 			case MediaItemType.quote:

@@ -83,7 +83,6 @@ export default class SendNotificationModal extends React.Component<SendNotificat
         if (this.state.env == NotificationEnvironment.dev) {
             rootRef = firebase.database();
         } else if (this.state.env == NotificationEnvironment.prod) {
-
             rootRef = prodApp.database();
             let prodPack = new Pack({
                 id: this.props.pack.id

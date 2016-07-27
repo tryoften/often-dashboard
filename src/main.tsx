@@ -17,7 +17,6 @@ import Authenticator from './Models/Authenticator';
 const db = require('./db');
 const { render } = require('react-dom');
 
-
 function requireAuth(nextState, replace) {
 	if (!Authenticator.isAuthorized()) {
 		replace({
