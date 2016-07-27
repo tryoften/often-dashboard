@@ -33,8 +33,6 @@ export default class PaginationControl extends React.Component<PaginationControl
 		this.handlePageClick = this.handlePageClick.bind(this);
 		this.onPageSizeChange = this.onPageSizeChange.bind(this);
 
-
-
 		this.state = {
 			pageSize: 0,
 			numPages: 0,
@@ -64,14 +62,17 @@ export default class PaginationControl extends React.Component<PaginationControl
 
 	calculateNumberOfPages(): number {
 		let numItems = this.props.items.length || 0;
-		let pageNum = this.state.pageSize === 0 ? 0 : Math.floor(numItems / this.state.pageSize);
+		let pageNum = this.state.pageSize === 0 ? 0 : Math.ceil(numItems / this.state.pageSize);
 
 		return pageNum;
 	}
 
-	getIndexRange(pageIndex: number): IndexRange {
-		let pageSize = this.state.pageSize;
-		let start = (pageIndex) * pageSize;
+	getIndexRange(pageIndex: number, pgSize?: number): IndexRange {
+		let pageSize = pgSize || this.state.pageSize;
+		let start = pageIndex * pageSize;
+		if (start > this.props.items.length - 1) {
+			start = 0;
+		}
 		return {
 			start: start,
 			end: start + pageSize - 1
@@ -89,7 +90,7 @@ export default class PaginationControl extends React.Component<PaginationControl
 		this.setState({
 			pageSize: numItems,
 			numPages: this.calculateNumberOfPages(),
-			indexRange: this.getIndexRange(this.state.activePage)
+			indexRange: this.getIndexRange(this.state.activePage, numItems)
 		});
 	}
 
