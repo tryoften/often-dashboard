@@ -3,11 +3,12 @@ import * as _ from 'underscore';
 import * as objectPath from 'object-path';
 import { browserHistory } from 'react-router';
 import { Grid, Row, Col, Input, Thumbnail, ButtonInput, Button, Tabs, Tab } from 'react-bootstrap';
-import { Owner, OwnerAttributes, IndexableObject } from '@often/often-core';
+import { Owner, OwnerAttributes, IndexableObject, Image } from '@often/often-core';
 import QuoteForm from '../Components/QuoteForm';
 import GIFForm from '../Components/GIFForm';
 import MediaItemView from '../Components/MediaItemView';
 import ConfirmationButton from '../Components/ConfirmationButton';
+import ImageSelectionModal from '../Components/ImageSelectionModal';
 
 interface OwnerItemProps extends React.Props<OwnerItem> {
 	params: {
@@ -21,6 +22,7 @@ interface OwnerItemState extends React.Props<OwnerItem> {
 	loading?: boolean;
 	shouldShowQuoteForm?: boolean;
 	shouldShowGIFForm?: boolean;
+	shouldShowImageForm?: boolean;
 	currentQuoteId?: string;
 	currentGIFId?: string;
 	form?: OwnerAttributes;
@@ -36,7 +38,8 @@ export default class OwnerItem extends React.Component<OwnerItemProps, OwnerItem
 			isNew: isNew,
 			loading: true,
 			shouldShowQuoteForm: false,
-			shouldShowGIFForm: false
+			shouldShowGIFForm: false,
+			shouldShowImageForm: false
 		};
 
 		this.updateOwnerState = this.updateOwnerState.bind(this);
@@ -104,8 +107,24 @@ export default class OwnerItem extends React.Component<OwnerItemProps, OwnerItem
 		this.setState({shouldShowGIFForm: true});
 	}
 
+	onClickAddImage(e: Event) {
+		e.preventDefault();
+		this.setState({shouldShowImageForm: true});
+	}
+
+	addImage(img: Image) {
+		let owner = this.state.model;
+		let imgProps = _.extend({ _type: "image"}, img.toJSON());
+		owner.addImage(imgProps);
+		owner.save();
+		this.setState({
+			shouldShowImageForm: false,
+			model: owner
+		});
+	}
+
 	close() {
-		this.setState({shouldShowQuoteForm: false, shouldShowGIFForm: false});
+		this.setState({shouldShowQuoteForm: false, shouldShowGIFForm: false, shouldShowImageForm: false});
 	}
 
 	onClickDelete(e) {
@@ -138,6 +157,11 @@ export default class OwnerItem extends React.Component<OwnerItemProps, OwnerItem
 			return <MediaItemView key={key} item={item} />;
 		});
 
+		var images = Object.keys(this.state.model.images || []).map(key => {
+			let item = this.state.model.images[key];
+			return <MediaItemView key={key} item={item} />;
+		});
+
 		var quoteForm = this.state.shouldShowQuoteForm ?
 			(<QuoteForm owner={this.state.model}
 				quoteId={this.state.currentQuoteId}
@@ -150,6 +174,12 @@ export default class OwnerItem extends React.Component<OwnerItemProps, OwnerItem
 				show={this.state.shouldShowGIFForm}
 				onSaveChanges={this.close.bind(this)}/>) : "";
 
+		var imageForm = this.state.shouldShowImageForm ?
+			(<ImageSelectionModal
+				show={this.state.shouldShowImageForm}
+				getResizedImage={this.addImage.bind(this)}
+			/>) : "";
+
 		return (
 			<div className="section">
 				<header className="section-header">
@@ -158,6 +188,7 @@ export default class OwnerItem extends React.Component<OwnerItemProps, OwnerItem
 
 				{quoteForm}
 				{gifForm}
+				{imageForm}
 
 				<Grid fluid={true}>
 					<Row>
@@ -219,6 +250,10 @@ export default class OwnerItem extends React.Component<OwnerItemProps, OwnerItem
 												<Tab eventKey={1} title="Quotes">
 													<Button onClick={this.onClickAddQuote.bind(this)}>Add Quote</Button>
 													<div className="tab-body clearfix">{itemsComponents}</div>
+												</Tab>
+												<Tab eventKey={2} title="Images">
+													<Button onClick={this.onClickAddImage.bind(this)}>Add Image</Button>
+													<div className="tab-body clearfix">{images}</div>
 												</Tab>
 											</Tabs>
 										</div>
