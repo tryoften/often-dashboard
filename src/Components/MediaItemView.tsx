@@ -71,6 +71,16 @@ export default class MediaItemView extends React.Component<SearchResultItemViewP
 						<img src={gif.image.medium_url} />
 					</div>
 				);
+
+			case MediaItemType.image:
+				let img = this.props.item as any;
+
+				return (
+					<div className={classes} onClick={this.onSelect.bind(this)}>
+						<img src={img.transforms.square.url} />
+					</div>
+				);
+
 			default:
 				return <div></div>;
 		}

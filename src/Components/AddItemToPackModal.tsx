@@ -150,6 +150,20 @@ export default class AddItemToPackModal extends React.Component<AddItemToPackMod
 
 		}) : "";
 
+		let images =  this.state.selectedOwner ? Object.keys(this.state.selectedOwner.get('images') || []).map(key => {
+			let item = this.state.selectedOwner.get('images')[key];
+			let foundImage = _.findWhere(this.state.selectedItems, {
+				id: item.id
+			});
+			return (<MediaItemView
+				key={key}
+				item={item}
+				onSelect={this.onSelectItem.bind(this)}
+				selected={!!foundImage} />);
+
+		}) : "";
+
+
 		let ownerName = this.state.selectedOwner ? this.state.selectedOwner.get('name') : '';
 
 		return (
@@ -169,6 +183,7 @@ export default class AddItemToPackModal extends React.Component<AddItemToPackMod
 						<div className="media-item-group">
 							<div className="items">{gifs}</div>
 							<div className="items">{ownerQuotes}</div>
+							<div className="images">{images}</div>
 						</div>
 					</div>
 				</Modal.Body>

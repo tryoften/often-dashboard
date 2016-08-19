@@ -59,7 +59,7 @@ export default class InfiniteScrollPagination extends React.Component<InfiniteSc
 
 	loadMore(pageToLoad: number) {
 		let indexRange = this.getIndexRange(pageToLoad);
-		let nextItems = this.props.items.slice(indexRange.start, indexRange.end);
+		let nextItems = this.props.items.slice(indexRange.start, indexRange.end + 1);
 		let state: InfiniteScrollState = {
 			items: this.state.items.concat(nextItems)
 		};
